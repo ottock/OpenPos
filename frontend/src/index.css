@@ -1,0 +1,216 @@
+/* Layout do Cadastro Positivo. Cores, bordas e superficies vem das variaveis
+   do tema PrimeReact (Lara), que trocam entre claro/escuro automaticamente. */
+
+* { box-sizing: border-box; }
+
+/* Fonte da aplicacao (sobrepoe o Inter padrao do tema Lara). */
+body { font-family: "JetBrains Mono", monospace; }
+.p-component { font-family: "JetBrains Mono", monospace; }
+
+/* ---------- Shell / Sidebar ---------- */
+.app-shell { display: flex; min-height: 100vh; background: var(--surface-ground); color: var(--text-color); }
+
+.sidebar {
+  width: 250px; flex-shrink: 0;
+  background: var(--surface-card); color: var(--text-color);
+  border-right: 1px solid var(--surface-border);
+  display: flex; flex-direction: column; padding: 18px 14px;
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  transition: width 0.2s ease, padding 0.2s ease;
+}
+
+.sidebar-top { display: flex; align-items: center; gap: 8px; padding-bottom: 20px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 6px 2px; min-width: 0; flex: 1; }
+.brand-mark {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+  color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center;
+}
+.brand-text { min-width: 0; overflow: hidden; }
+.brand-text strong {
+  color: var(--text-color); display: block; font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.brand-text small {
+  color: var(--text-color-secondary); font-size: 11px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.icon-btn { border: none; background: transparent; font-size: 16px; cursor: pointer; color: var(--text-color-secondary); }
+.sidebar-toggle {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+  display: grid; place-items: center; transition: background 0.15s, color 0.15s;
+}
+.sidebar-toggle:hover { background: var(--surface-hover); color: var(--text-color); }
+
+.nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 12px; border-radius: 8px;
+  color: var(--text-color); text-decoration: none; font-weight: 500;
+  white-space: nowrap; overflow: hidden;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-item:hover { background: var(--surface-hover); color: var(--text-color); }
+.nav-item.active { background: var(--primary-color); color: var(--primary-color-text, #fff); }
+.nav-icon { width: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+.sidebar-footer { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.theme-toggle {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+  background: var(--surface-100); border: none; color: var(--text-color);
+  font-weight: 500; font-size: 13px; white-space: nowrap; overflow: hidden;
+  transition: background 0.15s, color 0.15s;
+}
+.theme-toggle:hover { background: var(--surface-200); color: var(--text-color); }
+
+.health {
+  padding: 8px 12px; border-radius: 8px;
+  font-size: 12px; display: flex; align-items: center; gap: 10px;
+  background: var(--surface-100); white-space: nowrap; overflow: hidden;
+}
+.health-icon { font-size: 13px; flex-shrink: 0; color: var(--text-color-secondary); }
+.health-online .health-icon { color: var(--green-500, #16a34a); }
+.health-offline .health-icon,
+.health-degradado .health-icon { color: var(--red-500, #dc2626); }
+
+/* ---------- Sidebar recolhida (minimizada) ---------- */
+.sidebar.collapsed { width: 74px; padding: 18px 12px; }
+.sidebar.collapsed .brand { gap: 0; padding: 6px 0; justify-content: center; }
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .nav-item .label,
+.sidebar.collapsed .theme-toggle .label,
+.sidebar.collapsed .health .label { display: none; }
+.sidebar.collapsed .sidebar-top { flex-direction: column-reverse; gap: 12px; }
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .theme-toggle,
+.sidebar.collapsed .health { justify-content: center; padding-left: 0; padding-right: 0; }
+.sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+
+/* ---------- Conteudo ---------- */
+.content { flex: 1; padding: 28px 32px; min-width: 0; }
+.page { max-width: 1320px; margin: 0 auto; }
+
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+}
+.page-header h1 { margin: 0; font-size: 22px; display: inline-flex; align-items: center; gap: 12px; }
+.page-header h1 i { color: var(--primary-color); font-size: 20px; }
+.muted { color: var(--text-color-secondary); margin: 4px 0 0; }
+
+/* ---------- Card do cadastro (Fonte Principal) ---------- */
+.form-card { max-width: 1320px; margin-inline: auto; }
+.form-error { margin-bottom: 16px; }
+.form-error .p-message { width: 100%; }
+
+.form-sections {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; align-items: start;
+  animation: form-mode-in 0.22s ease;
+}
+/* Transicao simples ao alternar visualizacao <-> edicao (Editar/Cancelar). */
+@keyframes form-mode-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-sections { animation: none; }
+}
+
+.form-section { margin: 0; }
+
+/* Grid de 12 colunas: cada campo ocupa a largura definida em .col-N. */
+.form-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px 18px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label { font-size: 13px; font-weight: 600; color: var(--text-color); display: inline-flex; align-items: center; gap: 9px; }
+.form-field label i { color: var(--primary-color); font-size: 13px; }
+.form-field .req { color: var(--red-500, #dc2626); }
+
+/* Icone na legenda de cada secao (Fieldset). */
+.section-legend { display: inline-flex; align-items: center; gap: 10px; }
+.section-legend i { color: var(--primary-color); }
+.form-field .p-inputtext,
+.form-field .p-dropdown { width: 100%; }
+
+/* Iguala a altura dos inputs de edicao ao box de leitura (.field-value),
+   para que o layout nao "cresca" ao alternar visualizacao <-> edicao. */
+.form-field .p-inputtext,
+.form-field .p-dropdown .p-dropdown-label {
+  min-height: 42px;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+.form-field .p-dropdown { display: flex; align-items: center; }
+
+.form-field.col-2  { grid-column: span 2; }
+.form-field.col-3  { grid-column: span 3; }
+.form-field.col-5  { grid-column: span 5; }
+.form-field.col-6  { grid-column: span 6; }
+.form-field.col-9  { grid-column: span 9; }
+.form-field.col-12 { grid-column: span 12; }
+
+/* Valor exibido em modo de leitura (somente visualizacao). */
+.field-value {
+  display: flex; align-items: center; min-height: 42px;
+  padding: 9px 12px; font-size: 14px; color: var(--text-color);
+  background: var(--surface-ground); border: 1px solid var(--surface-border);
+  border-radius: 6px; word-break: break-word;
+}
+
+.form-actions {
+  display: flex; justify-content: flex-end; gap: 10px;
+  margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--surface-border);
+}
+
+/* ---------- Animacao dos icones ---------- */
+/* Transicao suave em todos os icones da interface. */
+.nav-icon i,
+.theme-toggle i,
+.health-icon,
+.page-header h1 i,
+.section-legend i,
+.form-field label i {
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+/* Entrada com "pop" (aparecem crescendo). */
+@keyframes icon-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  60%  { transform: scale(1.15); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.page-header h1 i,
+.section-legend i,
+.form-field label i {
+  animation: icon-pop 0.32s ease both;
+}
+
+/* Hover: icones interativos crescem levemente. */
+.nav-item:hover .nav-icon i { transform: scale(1.2); }
+.theme-toggle:hover i { transform: scale(1.2) rotate(-8deg); }
+
+/* Foco no campo destaca o icone do rotulo. */
+.form-field:focus-within label i { transform: scale(1.25); }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-header h1 i,
+  .section-legend i,
+  .form-field label i { animation: none; }
+  .nav-item:hover .nav-icon i,
+  .theme-toggle:hover i,
+  .form-field:focus-within label i { transform: none; }
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 820px) {
+  .app-shell { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; flex-direction: column; }
+  .nav { flex-direction: row; flex-wrap: wrap; }
+  .content { padding: 20px 16px; }
+  .form-sections { grid-template-columns: 1fr; gap: 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-field { grid-column: auto; }
+}
