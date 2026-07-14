@@ -26,7 +26,6 @@ async def read_fonte_principal(request: Request):
         log.debug("Received request for fonte principal list")
         controller = get_fonte_principal_controller(request.app.state.db)
         response = controller.read_fonte_principal()
-        log.info("Fonte principal list retrieved successfully")
         return response
     except Exception as exc:
         log.exception("Failed to fetch fonte principal list")

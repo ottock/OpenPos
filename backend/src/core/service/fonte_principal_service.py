@@ -24,6 +24,6 @@ class FontePrincipalService:
 
     def list_fonte_principal(self):
         log.debug("Executing fonte principal read query")
-        result = self.db_client.execute_query_path(str(QUERY_DIR / "fonteprincipal/read_fonteprincipal.sql"))
+        result = self.db_client.execute_query_path(str(QUERY_DIR / "read_fonteprincipal.sql"))
         log.info("Fonte principal list retrieved successfully")
         return result
