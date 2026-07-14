@@ -3,6 +3,12 @@
 
 * { box-sizing: border-box; }
 
+/* Zera a margem padrao do navegador (a "borda" ao redor) e faz o app ocupar
+   a viewport inteira. */
+html, body, #root { height: 100%; }
+body { margin: 0; }
+#root { min-height: 100%; background: var(--surface-ground); }
+
 /* Fonte da aplicacao (sobrepoe o Inter padrao do tema Lara). */
 body { font-family: "JetBrains Mono", monospace; }
 .p-component { font-family: "JetBrains Mono", monospace; }
