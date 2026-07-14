@@ -22,7 +22,24 @@ class FontePrincipalService:
         return dict(zip(columns, rows[0])) if rows else None
 
 
-    def list_fonte_principal(self):
+    def create_fonte_principal(self, fonte_principal):
+        log.debug("Executing fonte principal create query")
+        params = (
+            fonte_principal["cnpj"],
+            fonte_principal["nome_completo"],
+            fonte_principal.get("tipo") or "OUTRO",
+            fonte_principal["endereco_id"],
+            fonte_principal.get("telefone_id"),
+            fonte_principal.get("url_site"),
+        )
+        result = self.db_client.execute_query_path(
+            str(QUERY_DIR / "create_fonteprincipal.sql"), params
+        )
+        log.info("Fonte principal created successfully")
+        return result[0] if result else None
+
+
+    def read_fonte_principal(self):
         log.debug("Executing fonte principal read query")
         result = self.db_client.execute_query_path(str(QUERY_DIR / "read_fonteprincipal.sql"))
         log.info("Fonte principal list retrieved successfully")

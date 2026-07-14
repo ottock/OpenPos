@@ -7,6 +7,11 @@ export function formatCep(v) {
   return d.length === 8 ? `${d.slice(0, 5)}-${d.slice(5)}` : v || "";
 }
 
+// Normaliza o CEP para no maximo 8 digitos (schema: Endereco.CEP VARCHAR(8)).
+export function cleanCep(v) {
+  return onlyDigits(v).slice(0, 8);
+}
+
 export function formatCnpj(v) {
   const d = onlyDigits(v);
   if (d.length !== 14) return v || "";
