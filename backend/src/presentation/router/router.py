@@ -1,40 +1,30 @@
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
 
-from core.service.fonte_principal_service import FontePrincipalService
-from core.service.endereco_service import EnderecoService
+from backend.src.domain.service.fonte_principal_service import FontePrincipalService
+from backend.src.domain.service.endereco_service import EnderecoService
+from repository.postgres.fonte_principal_repository import FontePrincipalRepository
 from presentation.controller.fonte_principal_controller import FontePrincipalController
 from presentation.controller.endereco_controller import EnderecoController
+from domain.models import (
+    AtendimentoConsumidorCreate,
+    ContatoTecnicoCreate,
+    EnderecoCreate,
+    FontePrincipalCreate,
+    IdentificacaoCreate,
+    PessoaAutorizadaCreate,
+)
 
 
 log = logging.getLogger(__name__)
 router = APIRouter(prefix="/api")
 
 
-class FontePrincipalCreate(BaseModel):
-    cnpj: str
-    nome_completo: str
-    tipo: str = "OUTRO"
-    endereco_id: int
-    telefone_id: Optional[int] = None
-    url_site: Optional[str] = None
-
-
-class EnderecoCreate(BaseModel):
-    cep: str
-    logradouro: str
-    numero: Optional[str] = None
-    complemento: Optional[str] = None
-    bairro: str
-    municipio: str
-    uf: str
-
-
 def get_fonte_principal_controller(db_client):
-    service = FontePrincipalService(db_client)
+    repository = FontePrincipalRepository(db_client)
+    endereco_service = EnderecoService(db_client)
+    service = FontePrincipalService(repository, endereco_service)
     return FontePrincipalController(service)
 
 
@@ -47,6 +37,21 @@ def get_endereco_controller(db_client):
 async def health_check():
     return {"status": "ok"}
 
+
+@router.post("/fonteprincipal/identificacao", status_code=201)
+@router.post("/fonte_principal/identificacao", status_code=201)
+async def create_identificacao(request: Request, identificacao: IdentificacaoCreate):
+    try:
+        log.debug("Received request to create identificacao")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.create_identificacao(identificacao.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create identificacao")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating identificacao.",
+        ) from exc
 
 
 @router.post("/fonteprincipal", status_code=201)
@@ -108,4 +113,100 @@ async def read_endereco(request: Request):
         raise HTTPException(
             status_code=500,
             detail="Internal error while fetching endereco.",
+        ) from exc
+
+
+@router.post("/contatotecnico", status_code=201)
+@router.post("/contato_tecnico", status_code=201)
+async def create_contato_tecnico(request: Request, contato_tecnico: ContatoTecnicoCreate):
+    try:
+        log.debug("Received request to create contato tecnico")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.create_contato_tecnico(contato_tecnico.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create contato tecnico")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating contato tecnico.",
+        ) from exc
+
+
+@router.get("/contatotecnico")
+@router.get("/contato_tecnico")
+async def read_contato_tecnico(request: Request):
+    try:
+        log.debug("Received request for contato tecnico list")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.read_contato_tecnico()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch contato tecnico list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching contato tecnico.",
+        ) from exc
+
+
+@router.post("/atendimentoconsumidor", status_code=201)
+@router.post("/atendimento_consumidor", status_code=201)
+async def create_atendimento_consumidor(request: Request, atendimento_consumidor: AtendimentoConsumidorCreate):
+    try:
+        log.debug("Received request to create atendimento consumidor")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.create_atendimento_consumidor(atendimento_consumidor.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create atendimento consumidor")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating atendimento consumidor.",
+        ) from exc
+
+
+@router.get("/atendimentoconsumidor")
+@router.get("/atendimento_consumidor")
+async def read_atendimento_consumidor(request: Request):
+    try:
+        log.debug("Received request for atendimento consumidor list")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.read_atendimento_consumidor()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch atendimento consumidor list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching atendimento consumidor.",
+        ) from exc
+
+
+@router.post("/pessoaautorizada", status_code=201)
+@router.post("/pessoa_autorizada", status_code=201)
+async def create_pessoa_autorizada(request: Request, pessoa_autorizada: PessoaAutorizadaCreate):
+    try:
+        log.debug("Received request to create pessoa autorizada")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.create_pessoa_autorizada(pessoa_autorizada.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create pessoa autorizada")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating pessoa autorizada.",
+        ) from exc
+
+
+@router.get("/pessoaautorizada")
+@router.get("/pessoa_autorizada")
+async def read_pessoa_autorizada(request: Request):
+    try:
+        log.debug("Received request for pessoa autorizada list")
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.read_pessoa_autorizada()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch pessoa autorizada list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching pessoa autorizada.",
         ) from exc

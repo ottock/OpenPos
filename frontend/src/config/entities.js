@@ -24,6 +24,19 @@ export const ENUMS = {
     { value: "ABERTURA", label: "Abertura de cadastro" },
     { value: "COMPARTILHAMENTO", label: "Compartilhamento" },
   ],
+  // Tipo de telefone (lista fechada do leiaute ACPO109 - Atendimento ao Consumidor).
+  tipoTelefone: [
+    { value: "COMERCIAL", label: "Comercial" },
+    { value: "CELULAR", label: "Celular" },
+    { value: "GRATUITO", label: "Gratuito (0800)" },
+    { value: "FAX", label: "Fax" },
+  ],
+  // Unidades federativas do Brasil.
+  uf: [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS",
+    "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",
+    "SP", "SE", "TO",
+  ].map((s) => ({ value: s, label: s })),
   statusConsentimento: [
     { value: "ATIVO", label: "Ativo" },
     { value: "REVOGADO", label: "Revogado" },

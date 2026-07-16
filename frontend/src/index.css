@@ -106,25 +106,78 @@ body { font-family: "JetBrains Mono", monospace; }
 .page-header h1 i { color: var(--primary-color); font-size: 20px; }
 .muted { color: var(--text-color-secondary); margin: 4px 0 0; }
 
-/* ---------- Card do cadastro (Fonte Principal) ---------- */
-.form-card { max-width: 1320px; margin-inline: auto; }
+/* ---------- Cadastro da Fonte Principal ---------- */
+.fp-page { max-width: 1320px; margin: 0 auto; }
 .form-error { margin-bottom: 16px; }
 .form-error .p-message { width: 100%; }
 
-.form-sections {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; align-items: start;
+/* Cabecalho da pagina (eyebrow + titulo + subtitulo). */
+.fp-header { margin-bottom: 20px; }
+.fp-eyebrow {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--primary-color); margin-bottom: 4px;
+}
+.fp-header h1 { margin: 0; font-size: 24px; display: inline-flex; align-items: center; gap: 12px; }
+.fp-header h1 i { color: var(--primary-color); font-size: 21px; }
+.fp-header .muted { margin: 6px 0 0; max-width: 900px; font-size: 13px; }
+
+/* Painel de cada secao. */
+.fp-section {
+  background: var(--surface-card); border: 1px solid var(--surface-border);
+  border-radius: 12px; margin-bottom: 18px; overflow: hidden;
   animation: form-mode-in 0.22s ease;
 }
-/* Transicao simples ao alternar visualizacao <-> edicao (Editar/Cancelar). */
 @keyframes form-mode-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .form-sections { animation: none; }
+@media (prefers-reduced-motion: reduce) { .fp-section { animation: none; } }
+
+/* Faixa de cabecalho da secao. */
+.fp-section-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 12px 18px; background: var(--surface-50, var(--surface-ground));
+  border-bottom: 1px solid var(--surface-border); flex-wrap: wrap;
+}
+.fp-section-head-left { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.fp-section-head-left > i { color: var(--primary-color); font-size: 15px; }
+.fp-section-title { font-size: 15px; font-weight: 700; color: var(--text-color); }
+.fp-badge-num {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%;
+  background: var(--primary-color); color: var(--primary-color-text, #fff);
+  font-size: 12px; font-weight: 700; display: grid; place-items: center;
+}
+.fp-section-head-right { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fp-counter { font-size: 12px; color: var(--text-color-secondary); }
+.fp-readonly-tag {
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  background: var(--surface-200); color: var(--text-color-secondary);
 }
 
-.form-section { margin: 0; }
+/* Botao so-icone do cabecalho da secao, na mesma altura da pill "Somente leitura". */
+.fp-section-head-right .fp-icon-btn.p-button {
+  width: 24px; height: 24px; padding: 0; border-radius: 999px;
+}
+.fp-section-head-right .fp-icon-btn.p-button .p-button-icon { font-size: 12px; }
+.fp-section-head-right .fp-icon-btn.p-button .p-button-label { display: none; }
+
+/* Corpo da secao. */
+.fp-section-body { padding: 18px; }
+
+/* Sub-card de item repetivel (contato / canal / pessoa). */
+.fp-subcard {
+  border: 1px solid var(--surface-border); border-radius: 10px;
+  padding: 14px 16px; margin-bottom: 14px;
+}
+.fp-subcard:last-of-type { margin-bottom: 0; }
+.fp-subcard-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.fp-subcard-title { font-size: 13px; font-weight: 700; color: var(--primary-color); }
+.fp-add-btn { margin-top: 12px; }
+
+.fp-hint { font-size: 11px; color: var(--text-color-secondary); }
 
 /* Grid de 12 colunas: cada campo ocupa a largura definida em .col-N. */
 .form-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px 18px; }
@@ -153,6 +206,7 @@ body { font-family: "JetBrains Mono", monospace; }
 
 .form-field.col-2  { grid-column: span 2; }
 .form-field.col-3  { grid-column: span 3; }
+.form-field.col-4  { grid-column: span 4; }
 .form-field.col-5  { grid-column: span 5; }
 .form-field.col-6  { grid-column: span 6; }
 .form-field.col-9  { grid-column: span 9; }

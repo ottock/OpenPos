@@ -36,25 +36,55 @@ CREATE TABLE cadpos.FontePrincipal (
         REFERENCES cadpos.Telefone (Id)
 );
 
+-- Secao 2 do leiaute ACPO109 - Contato Tecnico (repetivel, min 1 / max 5).
 CREATE TABLE cadpos.ContatoTecnico (
-    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    NomeCompleto    VARCHAR(255) NOT NULL,
-    Email           VARCHAR(255),
-    EnderecoId      BIGINT,
-    TelefoneId      BIGINT NOT NULL,
-    FontePrincipalId BIGINT NOT NULL,
-
-    CONSTRAINT FK_ContatoTecnico_Endereco
-        FOREIGN KEY (EnderecoId)
-        REFERENCES cadpos.Endereco (Id),
-
-    CONSTRAINT FK_ContatoTecnico_Telefone
-        FOREIGN KEY (TelefoneId)
-        REFERENCES cadpos.Telefone (Id),
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Nome             VARCHAR(255) NOT NULL,
+    Email            VARCHAR(255),
+    Departamento     VARCHAR(100),
+    Cargo            VARCHAR(100),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+    Ramal            VARCHAR(10),
 
     CONSTRAINT FK_ContatoTecnico_FontePrincipal
         FOREIGN KEY (FontePrincipalId)
         REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
+);
+
+-- Secao 3 do leiaute ACPO109 - Atendimento ao Consumidor (repetivel, min 1 / max 5).
+CREATE TABLE cadpos.AtendimentoConsumidor (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Departamento     VARCHAR(100),
+    Email            VARCHAR(255),
+    TipoTelefone     VARCHAR(20),
+    CodPais          VARCHAR(3),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+
+    CONSTRAINT FK_AtendimentoConsumidor_FontePrincipal
+        FOREIGN KEY (FontePrincipalId)
+        REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
+);
+
+-- Secao 4 do leiaute ACPO109 - Pessoa Autorizada para Liminar (repetivel, min 1 / max 5).
+CREATE TABLE cadpos.PessoaAutorizada (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Nome             VARCHAR(255),
+    Email            VARCHAR(255),
+    CPF              VARCHAR(11),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+
+    CONSTRAINT FK_PessoaAutorizada_FontePrincipal
+        FOREIGN KEY (FontePrincipalId)
+        REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE cadpos.Produtos ();
