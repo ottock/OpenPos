@@ -3,6 +3,8 @@ SELECT
 	fp.CNPJ AS cnpj,
 	fp.NomeCompleto AS nome_completo,
 	fp.Tipo AS tipo,
+	fp.IspbFonte AS ispb_fonte,
+	fp.IspbCip AS ispb_cip,
 	fp.EnderecoId AS endereco_id,
 	fp.TelefoneId AS telefone_id,
 	fp.UrlSite AS url_site,

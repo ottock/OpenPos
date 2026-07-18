@@ -7,6 +7,8 @@ class FontePrincipalCreate(BaseModel):
     cnpj: str
     nome_completo: str
     tipo: str = "OUTRO"
+    ispb_fonte: str
+    ispb_cip: str
     endereco_id: int
     telefone_id: Optional[int] = None
     url_site: Optional[str] = None
@@ -17,6 +19,8 @@ class IdentificacaoCreate(BaseModel):
     cnpj: str
     nome_completo: str
     tipo: str = "OUTRO"
+    ispb_fonte: str
+    ispb_cip: str
     url_site: Optional[str] = None
     # Endereco
     cep: str

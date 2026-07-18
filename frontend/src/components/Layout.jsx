@@ -45,14 +45,7 @@ export default function Layout({ children }) {
   return (
     <div className="app-shell">
       <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
-        <div className="sidebar-top">
-          <div className="brand">
-            <span className="brand-mark">OP</span>
-            <div className="brand-text">
-              <strong>Cadastro Positivo</strong>
-              <small>Lei 12.414/2011</small>
-            </div>
-          </div>
+        <div className="sidebar-toggle-row">
           <button
             className="icon-btn sidebar-toggle"
             onClick={() => setCollapsed((c) => !c)}
@@ -61,6 +54,16 @@ export default function Layout({ children }) {
           >
             <i className="pi pi-chevron-left" />
           </button>
+        </div>
+
+        <div className="sidebar-top">
+          <div className="brand">
+            <span className="brand-mark">OP</span>
+            <div className="brand-text">
+              <strong>Cadastro Positivo</strong>
+              <small>Lei 12.414/2011</small>
+            </div>
+          </div>
         </div>
 
         <nav className="nav">

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.config import Config
 from presentation.api.api import app
 from core.logger.logger import setup_logger
-from repository.postgres.database import PostgresClient
+from repository.postgres.base import PostgresClient
 
 
 def main():
@@ -26,7 +26,6 @@ def main():
             port=config.db_port,
             database=config.db_database,
         )
-        # presentation layer // api -> router -> controller -> service
         app.state.db = db
         log.info("Backend initialized successfully")
         uvicorn.run(

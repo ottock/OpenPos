@@ -3,17 +3,10 @@ from pathlib import Path
 
 
 log = logging.getLogger(__name__)
-QUERY_ROOT = Path(__file__).resolve().parent / "query"
+QUERY_ROOT = Path(__file__).resolve().parent / "postgres" / "query"
 
 
 class FontePrincipalRepository:
-    """Acesso a dados do agregado Fonte Principal e suas secoes repetiveis.
-
-    Responsabilidade unica: traduzir chamadas do dominio (dicts) em SQL -
-    localizar o arquivo .sql, montar os parametros na ordem das colunas,
-    executar e normalizar o retorno. Nenhuma regra de negocio aqui.
-    """
-
     def __init__(self, db_client):
         self.db_client = db_client
         self._fonte_dir = QUERY_ROOT / "fonteprincipal"
@@ -31,14 +24,13 @@ class FontePrincipalRepository:
         return result[0] if result else None
 
 
-    # ------------------------------------------------------------------
-    # Secao 1 - Fonte Principal
-    # ------------------------------------------------------------------
     def insert_fonte_principal(self, fonte_principal):
         params = (
             fonte_principal["cnpj"],
             fonte_principal["nome_completo"],
             fonte_principal.get("tipo") or "OUTRO",
+            fonte_principal["ispb_fonte"],
+            fonte_principal["ispb_cip"],
             fonte_principal["endereco_id"],
             fonte_principal.get("telefone_id"),
             fonte_principal.get("url_site"),
@@ -54,9 +46,6 @@ class FontePrincipalRepository:
         return self._run_one(self._fonte_dir / "get_fonteprincipal.sql", (fonte_id,))
 
 
-    # ------------------------------------------------------------------
-    # Secao 2 - Contato Tecnico
-    # ------------------------------------------------------------------
     def insert_contato_tecnico(self, contato_tecnico):
         params = (
             contato_tecnico["fonte_principal_id"],
@@ -75,9 +64,6 @@ class FontePrincipalRepository:
         return self._run(self._contato_dir / "read_contatotecnico.sql")
 
 
-    # ------------------------------------------------------------------
-    # Secao 3 - Atendimento ao Consumidor
-    # ------------------------------------------------------------------
     def insert_atendimento_consumidor(self, atendimento_consumidor):
         params = (
             atendimento_consumidor["fonte_principal_id"],
@@ -97,9 +83,6 @@ class FontePrincipalRepository:
         return self._run(self._atendimento_dir / "read_atendimentoconsumidor.sql")
 
 
-    # ------------------------------------------------------------------
-    # Secao 4 - Pessoa Autorizada para Liminar
-    # ------------------------------------------------------------------
     def insert_pessoa_autorizada(self, pessoa_autorizada):
         params = (
             pessoa_autorizada["fonte_principal_id"],

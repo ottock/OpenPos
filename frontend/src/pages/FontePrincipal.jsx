@@ -35,7 +35,9 @@ const IDENT_FIELDS = [
   { name: "cnpj", label: "CNPJ", mask: "cnpj", required: true, placeholder: "12.ABC.345/01DE-35", span: 4, group: "fonte", hint: "14 dígitos - número de inscrição da pessoa jurídica." },
   { name: "nome_completo", label: "Razão Social", required: true, span: 5, group: "fonte", hint: "Até 60 caracteres." },
   { name: "tipo", label: "Tipo de fonte", type: "select", options: ENUMS.tipoFonte, default: "OUTRO", span: 3, group: "fonte" },
-  { name: "url_site", label: "URL do site", placeholder: "https://...", span: 12, group: "fonte", hint: "Opcional - até 120 caracteres." },
+  { name: "ispb_fonte", label: "ISPB da Fonte", mask: "ispb", required: true, placeholder: "00000000", span: 3, group: "fonte", hint: "8 dígitos - Identificador do Sistema de Pagamentos Brasileiro da fonte." },
+  { name: "ispb_cip", label: "ISPB CIP", mask: "ispb", required: true, placeholder: "00000000", span: 3, group: "fonte", hint: "8 dígitos - Identificador do Sistema de Pagamentos Brasileiro da CIP." },
+  { name: "url_site", label: "URL do site", placeholder: "https://...", span: 6, group: "fonte", hint: "Opcional - até 120 caracteres." },
   { name: "cep", label: "CEP", mask: "cep", required: true, placeholder: "00000-000", span: 3, group: "endereco", hint: "8 dígitos." },
   { name: "logradouro", label: "Logradouro", required: true, span: 6, group: "endereco" },
   { name: "numero", label: "Número", span: 3, group: "endereco" },
@@ -509,6 +511,16 @@ function renderInput(f, id, value, onChange) {
         inputMode="numeric"
         value={formatCpfCnpj(value)}
         onChange={(e) => onChange(f.name, digits(e.target.value).slice(0, 11))}
+      />
+    );
+  }
+  if (f.mask === "ispb") {
+    return (
+      <InputText
+        {...common}
+        inputMode="numeric"
+        value={value ?? ""}
+        onChange={(e) => onChange(f.name, digits(e.target.value).slice(0, 8))}
       />
     );
   }

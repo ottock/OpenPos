@@ -23,6 +23,8 @@ CREATE TABLE cadpos.FontePrincipal (
     CNPJ            VARCHAR(14)  NOT NULL UNIQUE,
     NomeCompleto    VARCHAR(255) NOT NULL,
     Tipo            VARCHAR(20)  NOT NULL DEFAULT 'OUTRO',
+    IspbFonte       VARCHAR(8)   NOT NULL,
+    IspbCip         VARCHAR(8)   NOT NULL,
     EnderecoId      BIGINT       NOT NULL,
     TelefoneId      BIGINT,
     UrlSite         VARCHAR(255),
