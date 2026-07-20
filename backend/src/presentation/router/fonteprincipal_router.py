@@ -5,12 +5,12 @@ from fastapi import APIRouter, HTTPException, Request
 from domain.service.fonte_principal_service import FontePrincipalService
 from domain.service.endereco_service import EnderecoService
 from repository.fonte_principal_repository import FontePrincipalRepository
-from presentation.controller.fonte_principal_controller import FontePrincipalController
+from presentation.controller.fonteprincipal_controller import FontePrincipalController
 from presentation.controller.endereco_controller import EnderecoController
-from domain.models import (
+from domain.model.endereco_model import EnderecoCreate
+from domain.model.fonte_principal_model import (
     AtendimentoConsumidorCreate,
     ContatoTecnicoCreate,
-    EnderecoCreate,
     FontePrincipalCreate,
     IdentificacaoCreate,
     PessoaAutorizadaCreate,

@@ -196,7 +196,7 @@ export default function FontePrincipal() {
     try {
       const rec = await api.create(IDENTIFICACAO_RESOURCE, buildPayload(IDENT_FIELDS, ident));
       if (!rec || rec.id == null) {
-        throw new Error("A API não retornou a identificação salva.");
+        throw new Error("O backend não retornou a identificação salva.");
       }
 
       setRecord(rec);
@@ -205,7 +205,7 @@ export default function FontePrincipal() {
       await loadSecoes(rec.id);
       toast.current?.show({ severity: "success", summary: "Salvo", detail: "Identificação salva com sucesso.", life: 2500 });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : err.message || "Erro ao salvar. Verifique a API.");
+      setError(err instanceof ApiError ? err.message : err.message || "Erro ao salvar. Verifique o backend.");
     } finally {
       setSubmitting(false);
     }
@@ -230,7 +230,7 @@ export default function FontePrincipal() {
       setEdit(id, false);
       toast.current?.show({ severity: "success", summary: "Salvo", detail, life: 2500 });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : err.message || "Erro ao salvar. Verifique a API.");
+      setError(err instanceof ApiError ? err.message : err.message || "Erro ao salvar. Verifique o backend.");
     } finally {
       setSubmitting(false);
     }

@@ -88,9 +88,9 @@ export default function Layout({ children }) {
             <span className="label">{isDark ? "Tema claro" : "Tema escuro"}</span>
           </button>
 
-          <div className={`health health-${health}`} title={`API: ${health}`}>
+          <div className={`health health-${health}`} title={`Backend: ${health}`}>
             <i className={`health-icon ${HEALTH_ICON[health]}`} />
-            <span className="label">API: {health}</span>
+            <span className="label">Backend: {health}</span>
           </div>
         </div>
       </aside>
