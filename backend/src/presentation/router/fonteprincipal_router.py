@@ -1,5 +1,4 @@
 import logging
-
 from fastapi import APIRouter, HTTPException, Request
 
 from domain.service.fonte_principal_service import FontePrincipalService

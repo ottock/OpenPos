@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import Config
 from presentation.api.base import app
-from backend.src.core.log.base import setup_logger
+from core.log.base import setup_logger
 from repository.postgres.base import PostgresClient
 
 
