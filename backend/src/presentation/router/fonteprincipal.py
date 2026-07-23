@@ -1,13 +1,13 @@
 import logging
 from fastapi import APIRouter, HTTPException, Request
 
-from domain.service.fonte_principal_service import FontePrincipalService
-from domain.service.endereco_service import EnderecoService
-from repository.fonte_principal_repository import FontePrincipalRepository
-from presentation.controller.fonteprincipal_controller import FontePrincipalController
-from presentation.controller.endereco_controller import EnderecoController
-from domain.model.endereco_model import EnderecoCreate
-from domain.model.fonte_principal_model import (
+from backend.src.domain.service.fonteprincipal import FontePrincipalService
+from backend.src.domain.service.endereco import EnderecoService
+from backend.src.repository.fonteprincipal import FontePrincipalRepository
+from backend.src.presentation.controller.fonteprincipal import FontePrincipalController
+from backend.src.presentation.controller.endereco import EnderecoController
+from backend.src.domain.model.endereco import EnderecoCreate
+from backend.src.domain.model.fonteprincipal import (
     AtendimentoConsumidorCreate,
     ContatoTecnicoCreate,
     FontePrincipalCreate,
