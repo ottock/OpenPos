@@ -1,13 +1,8 @@
 import logging
 from fastapi import APIRouter, HTTPException, Request
 
-from backend.src.domain.service.fonteprincipal import FontePrincipalService
-from backend.src.domain.service.endereco import EnderecoService
-from backend.src.repository.fonteprincipal import FontePrincipalRepository
-from backend.src.presentation.controller.fonteprincipal import FontePrincipalController
-from backend.src.presentation.controller.endereco import EnderecoController
-from backend.src.domain.model.endereco import EnderecoCreate
-from backend.src.domain.model.fonteprincipal import (
+from presentation.controller.base import get_fonte_principal_controller
+from domain.model.fonteprincipal import (
     AtendimentoConsumidorCreate,
     ContatoTecnicoCreate,
     FontePrincipalCreate,
@@ -17,24 +12,7 @@ from backend.src.domain.model.fonteprincipal import (
 
 
 log = logging.getLogger(__name__)
-router = APIRouter(prefix="/api")
-
-
-def get_fonte_principal_controller(db_client):
-    repository = FontePrincipalRepository(db_client)
-    endereco_service = EnderecoService(db_client)
-    service = FontePrincipalService(repository, endereco_service)
-    return FontePrincipalController(service)
-
-
-def get_endereco_controller(db_client):
-    service = EnderecoService(db_client)
-    return EnderecoController(service)
-
-
-@router.get("/health")
-async def health_check():
-    return {"status": "ok"}
+router = APIRouter(tags=["fonteprincipal"])
 
 
 @router.post("/fonteprincipal/identificacao", status_code=201)
@@ -82,36 +60,6 @@ async def read_fonte_principal(request: Request):
         raise HTTPException(
             status_code=500,
             detail="Internal error while fetching fonte principal.",
-        ) from exc
-
-
-@router.post("/endereco", status_code=201)
-async def create_endereco(request: Request, endereco: EnderecoCreate):
-    try:
-        log.debug("Received request to create endereco")
-        controller = get_endereco_controller(request.app.state.db)
-        response = controller.create_endereco(endereco.model_dump())
-        return response
-    except Exception as exc:
-        log.exception("Failed to create endereco")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal error while creating endereco.",
-        ) from exc
-
-
-@router.get("/endereco")
-async def read_endereco(request: Request):
-    try:
-        log.debug("Received request for endereco list")
-        controller = get_endereco_controller(request.app.state.db)
-        response = controller.read_endereco()
-        return response
-    except Exception as exc:
-        log.exception("Failed to fetch endereco list")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal error while fetching endereco.",
         ) from exc
 
 

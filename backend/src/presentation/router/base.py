@@ -1,0 +1,18 @@
+import logging
+from fastapi import APIRouter
+
+from presentation.router.endereco import router as endereco_router
+from presentation.router.fonteprincipal import router as fonte_principal_router
+
+
+log = logging.getLogger(__name__)
+router = APIRouter(prefix="/api")
+
+
+@router.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
+router.include_router(fonte_principal_router)
+router.include_router(endereco_router)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from core.log.base import setup_logger
-from backend.src.presentation.router.fonteprincipal import router
+from presentation.router.base import router
 
 
 setup_logger()
