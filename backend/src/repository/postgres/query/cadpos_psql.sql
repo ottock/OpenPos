@@ -87,5 +87,19 @@ CREATE TABLE cadpos.PessoaAutorizada (
         ON DELETE CASCADE
 );
 
-CREATE TABLE cadpos.Produtos ();
-CREATE TABLE cadpos.Modalidades ();
+CREATE TABLE cadpos.Modalidades (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+);
+
+-- ModalidadeId e opcional enquanto o cadastro de Modalidades nao existir.
+CREATE TABLE cadpos.Produtos (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ModalidadeId    BIGINT,
+    Codigo          VARCHAR(10)  NOT NULL UNIQUE,
+    Nome            VARCHAR(255) NOT NULL,
+    Ativo           BOOLEAN      NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT FK_Produtos_Modalidades
+        FOREIGN KEY (ModalidadeId)
+        REFERENCES cadpos.Modalidades (Id)
+);

@@ -57,6 +57,9 @@ body { font-family: "JetBrains Mono", monospace; }
   color: var(--text-color); text-decoration: none; font-weight: 500;
   white-space: nowrap; overflow: hidden;
   transition: background 0.15s, color 0.15s;
+  /* Os itens sao <button>: zera a aparencia nativa e alinha com o texto do menu. */
+  width: 100%; border: none; background: transparent; cursor: pointer;
+  font-family: inherit; font-size: inherit; text-align: left;
 }
 .nav-item:hover { background: var(--surface-hover); color: var(--text-color); }
 .nav-item.active { background: var(--primary-color); color: var(--primary-color-text, #fff); }
@@ -225,6 +228,40 @@ body { font-family: "JetBrains Mono", monospace; }
   display: flex; justify-content: flex-end; gap: 10px;
   margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--surface-border);
 }
+
+/* Campo booleano (InputSwitch + rotulo), na mesma altura dos inputs. */
+.fp-switch-field { display: flex; align-items: center; gap: 10px; min-height: 42px; }
+.fp-switch-label { font-size: 14px; color: var(--text-color-secondary); }
+
+/* Em modo leitura o switch e apenas indicativo: fica travado, mas mantem a
+   cor de ligado/desligado (sem o esmaecido padrao do estado desabilitado). */
+.fp-switch-readonly .p-inputswitch.p-disabled { opacity: 1; cursor: default; }
+
+/* Tabela de registros cadastrados dentro de uma secao. */
+.fp-table .p-datatable-wrapper { border: 1px solid var(--surface-border); border-radius: 8px; }
+.fp-table .p-datatable-thead > tr > th { background: var(--surface-50, var(--surface-ground)); font-size: 13px; }
+.fp-table .p-datatable-tbody > tr > td { font-size: 13px; }
+.fp-table .p-datatable-emptymessage td { text-align: center; color: var(--text-color-secondary); }
+
+/* Botoes de editar/excluir na coluna "Acoes". */
+.fp-row-actions { display: inline-flex; gap: 2px; }
+.fp-row-actions .p-button.p-button-icon-only {
+  width: 30px; height: 30px; padding: 0;
+}
+.fp-row-actions .p-button .p-button-icon { font-size: 13px; }
+
+/* Linha da tabela correspondente ao registro em edicao. */
+.fp-table .p-datatable-tbody > tr.fp-row-editing > td {
+  background: var(--highlight-bg, var(--surface-100));
+  box-shadow: inset 3px 0 0 0 var(--primary-color);
+}
+
+/* Inputs dentro da linha em edicao (nao usam a altura do formulario). */
+.fp-table .p-datatable-tbody > tr > td .p-inputtext {
+  width: 100%; min-height: 0; padding: 5px 8px; font-size: 13px;
+}
+.fp-table .fp-switch-field { min-height: 0; gap: 8px; }
+.fp-table .fp-switch-label { font-size: 13px; }
 
 /* ---------- Animacao dos icones ---------- */
 /* Transicao suave em todos os icones da interface. */

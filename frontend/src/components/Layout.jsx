@@ -10,7 +10,13 @@ const HEALTH_ICON = {
   checando: "pi pi-spin pi-spinner",
 };
 
-export default function Layout({ children }) {
+// Itens do menu lateral. O id casa com as paginas registradas em App.jsx.
+const NAV_ITEMS = [
+  { id: "fonteprincipal", label: "Fonte Principal", icon: "pi pi-building" },
+  { id: "produto", label: "Produtos", icon: "pi pi-box" },
+];
+
+export default function Layout({ children, page, onNavigate }) {
   const [health, setHealth] = useState("checando");
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem("sidebarCollapsed") === "1");
   const [isDark, setIsDark] = useState(() => getStoredTheme() === "dark");
@@ -67,12 +73,24 @@ export default function Layout({ children }) {
         </div>
 
         <nav className="nav">
-          <a href="#" className="nav-item active" aria-current="page">
-            <span className="nav-icon">
-              <i className="pi pi-building" />
-            </span>
-            <span className="label">Fonte Principal</span>
-          </a>
+          {NAV_ITEMS.map((item) => {
+            const active = page === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`nav-item${active ? " active" : ""}`}
+                aria-current={active ? "page" : undefined}
+                title={item.label}
+                onClick={() => onNavigate?.(item.id)}
+              >
+                <span className="nav-icon">
+                  <i className={item.icon} />
+                </span>
+                <span className="label">{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="sidebar-footer">

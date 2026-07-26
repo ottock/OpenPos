@@ -3,6 +3,9 @@ from domain.service.fonteprincipal import FontePrincipalService
 from repository.fonteprincipal import FontePrincipalRepository
 from presentation.controller.endereco import EnderecoController
 from presentation.controller.fonteprincipal import FontePrincipalController
+from repository.produto import ProdutoRepository
+from domain.service.produto import ProdutoService
+from presentation.controller.produto import ProdutoController
 
 
 def get_fonte_principal_controller(db_client):
@@ -15,3 +18,9 @@ def get_fonte_principal_controller(db_client):
 def get_endereco_controller(db_client):
     service = EnderecoService(db_client)
     return EnderecoController(service)
+
+
+def get_produto_controller(db_client):
+    repository = ProdutoRepository(db_client)
+    service = ProdutoService(repository)
+    return ProdutoController(service)
