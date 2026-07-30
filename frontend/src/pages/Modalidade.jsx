@@ -241,6 +241,7 @@ export default function Modalidade() {
           <DataTable
             value={modalidades}
             loading={loading}
+            loadingIcon="pi pi-spin pi-spinner"
             dataKey="id"
             size="small"
             stripedRows

@@ -16,3 +16,12 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>
 );
+
+// Remove o splash estatico (index.html) assim que o app renderiza.
+const splash = document.getElementById("app-splash");
+if (splash) {
+  requestAnimationFrame(() => {
+    splash.classList.add("app-splash-hide");
+    setTimeout(() => splash.remove(), 300);
+  });
+}

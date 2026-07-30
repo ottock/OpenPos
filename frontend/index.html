@@ -10,8 +10,47 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap"
     />
+    <!-- Estilos inline: precisam existir antes do bundle carregar, para o
+         splash aparecer imediatamente (nao depende de CSS/JS externo). -->
+    <style>
+      /* Zera a margem padrao do navegador e reserva o espaco da barra de
+         rolagem desde o primeiro paint (html sempre com scrollbar-gutter).
+         Sem isso, a barra de rolagem so aparece quando o app termina de
+         montar atras do splash, mudando a largura disponivel: isso deixava
+         o splash com os icones deslocados a esquerda enquanto era exibido
+         e, ao sumir, deslocava a pagina (Fonte Principal etc.) para a
+         esquerda de novo quando a barra finalmente aparecia. */
+      html, body { margin: 0; }
+      html { overflow-y: scroll; }
+      #app-splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 18px; background: #0f172a; color: #fff;
+        transition: opacity 0.25s ease;
+      }
+      #app-splash.app-splash-hide { opacity: 0; pointer-events: none; }
+      .app-splash-mark {
+        width: 48px; height: 48px; border-radius: 13px;
+        background: linear-gradient(135deg, #3b82f6, #7c3aed);
+        display: grid; place-items: center;
+        font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 14px;
+      }
+      .app-splash-spinner {
+        width: 30px; height: 30px; border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.2); border-top-color: #fff;
+        animation: app-splash-spin 0.8s linear infinite;
+      }
+      @keyframes app-splash-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .app-splash-spinner { animation-duration: 2.4s; }
+      }
+    </style>
   </head>
   <body>
+    <div id="app-splash" aria-hidden="true">
+      <span class="app-splash-mark">OP</span>
+      <span class="app-splash-spinner"></span>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

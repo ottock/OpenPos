@@ -277,6 +277,7 @@ export default function Produto() {
           <DataTable
             value={produtos}
             loading={loading}
+            loadingIcon="pi pi-spin pi-spinner"
             dataKey="id"
             size="small"
             stripedRows
