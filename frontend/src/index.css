@@ -343,6 +343,18 @@ body { font-family: "JetBrains Mono", monospace; }
   .form-field:focus-within label i { transform: none; }
 }
 
+/* Icone de carregamento (tabela do card 2, botao de recarregar, salvar,
+   excluir): usa "pi-spin" apenas para indicar operacao em andamento, entao
+   mantem a rotacao mesmo com "reduzir movimento" ativado no SO - sem ela o
+   icone fica parado e parece travado em vez de "carregando". */
+.pi-spin {
+  animation: fp-spin 0.9s linear infinite !important;
+}
+@keyframes fp-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* ---------- Barra superior (apenas telas pequenas) ---------- */
 /* No desktop a navegacao fica toda na sidebar, entao a barra nao existe. */
 .mobile-topbar { display: none; }
