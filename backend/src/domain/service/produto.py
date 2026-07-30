@@ -1,5 +1,7 @@
 import logging
 
+from pattern.retry import retry_constant
+
 
 log = logging.getLogger(__name__)
 
@@ -8,7 +10,7 @@ class ProdutoService:
     def __init__(self, repository):
         self.repository = repository
 
-
+    @retry_constant(max_retries=3, delay=2)
     def create_produto(self, produto):
         result = self.repository.insert_produto(produto)
         log.info("Produto created successfully")
