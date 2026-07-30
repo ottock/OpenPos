@@ -1,5 +1,7 @@
 import logging
 
+from pattern.retry import linear_retry
+
 
 log = logging.getLogger(__name__)
 
@@ -30,6 +32,7 @@ class FontePrincipalService:
         return fonte
 
 
+    @linear_retry()
     def create_fonte_principal(self, fonte_principal):
         result = self.repository.insert_fonte_principal(fonte_principal)
         log.info("Fonte principal created successfully")
@@ -40,6 +43,7 @@ class FontePrincipalService:
         return self.repository.select_fonte_principal()
 
 
+    @linear_retry()
     def create_contato_tecnico(self, contato_tecnico):
         result = self.repository.insert_contato_tecnico(contato_tecnico)
         log.info("Contato tecnico created successfully")
@@ -50,6 +54,7 @@ class FontePrincipalService:
         return self.repository.select_contato_tecnico()
 
 
+    @linear_retry()
     def create_atendimento_consumidor(self, atendimento_consumidor):
         result = self.repository.insert_atendimento_consumidor(atendimento_consumidor)
         log.info("Atendimento consumidor created successfully")
@@ -60,6 +65,7 @@ class FontePrincipalService:
         return self.repository.select_atendimento_consumidor()
 
 
+    @linear_retry()
     def create_pessoa_autorizada(self, pessoa_autorizada):
         result = self.repository.insert_pessoa_autorizada(pessoa_autorizada)
         log.info("Pessoa autorizada created successfully")

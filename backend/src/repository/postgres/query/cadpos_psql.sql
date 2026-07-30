@@ -88,10 +88,12 @@ CREATE TABLE cadpos.PessoaAutorizada (
 );
 
 CREATE TABLE cadpos.Modalidades (
-    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Nome            VARCHAR(255) NOT NULL UNIQUE,
+    Descricao       VARCHAR(500),
+    TipoReporte     VARCHAR(100) NOT NULL
 );
 
--- ModalidadeId e opcional enquanto o cadastro de Modalidades nao existir.
 CREATE TABLE cadpos.Produtos (
     Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     ModalidadeId    BIGINT,

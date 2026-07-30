@@ -16,6 +16,7 @@ const HEALTH_ICON = {
 const NAV_ITEMS = [
   { id: "fonteprincipal", label: "Fonte Principal", icon: "pi pi-building" },
   { id: "produto", label: "Produtos", icon: "pi pi-box" },
+  { id: "modalidade", label: "Modalidades", icon: "pi pi-tags" },
 ];
 
 // Abaixo desta largura o dock deixa de ocupar espaco e vira um menu deslizante

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
@@ -8,59 +8,34 @@ import { api, ApiError } from "../api/client.js";
 import {
   SectionHead,
   FieldsGrid,
-  BooleanTag,
   renderInput,
   emptyItem,
   toList,
   buildPayload,
 } from "../components/FormSection.jsx";
 
-// Recurso da API (backend: presentation/router/produto.py).
-const RESOURCE = "produto";
-// Recurso usado para popular o dropdown de modalidades (presentation/router/modalidade.py).
-const MODALIDADE_RESOURCE = "modalidade";
+// Recurso da API (backend: presentation/router/modalidade.py).
+const RESOURCE = "modalidade";
 
 // ---------------------------------------------------------------------------
 // Campos do cadastro. span = largura no grid de 12 colunas.
-// modalidadeOptions e montado a partir das modalidades cadastradas (ver estado
-// "modalidades" no componente), por isso os campos sao gerados por funcao.
 // ---------------------------------------------------------------------------
-function buildProdutoFields(modalidadeOptions) {
-  return [
-    { name: "codigo", label: "Código", required: true, span: 3, maxLength: 10, placeholder: "0001", hint: "Até 10 caracteres. Reenviar o mesmo código atualiza o produto." },
-    { name: "nome", label: "Nome", required: true, span: 6, maxLength: 255, placeholder: "Cartão de crédito" },
-    {
-      name: "modalidade_id",
-      label: "Modalidade",
-      type: "select",
-      span: 3,
-      options: modalidadeOptions,
-      placeholder: modalidadeOptions.length ? "Selecione..." : "Nenhuma modalidade cadastrada",
-      hint: modalidadeOptions.length ? "Opcional." : "Cadastre uma modalidade antes de vincular um produto.",
-    },
-    { name: "ativo", label: "Situação", type: "boolean", default: true, span: 3, trueLabel: "Ativo", falseLabel: "Inativo" },
-  ];
+const MODALIDADE_FIELDS = [
+  { name: "nome", label: "Modalidade", required: true, span: 4, maxLength: 255, placeholder: "Cartão de crédito" },
+  { name: "descricao", label: "Descrição", span: 5, maxLength: 500, placeholder: "Descrição da modalidade" },
+  { name: "tipo_reporte", label: "Tipo de Reporte", required: true, span: 3, maxLength: 100, placeholder: "Rotativo" },
+];
+
+const byName = (name) => MODALIDADE_FIELDS.find((f) => f.name === name);
+
+// Campos obrigatorios ainda em branco (usado no cadastro e na edicao da linha).
+function faltandoObrigatorios(values) {
+  return MODALIDADE_FIELDS.filter((f) => f.required && !String(values[f.name] ?? "").trim());
 }
 
-export default function Produto() {
+export default function Modalidade() {
+  const [form, setForm] = useState(() => emptyItem(MODALIDADE_FIELDS));
   const [modalidades, setModalidades] = useState([]);
-  const modalidadeOptions = useMemo(
-    () => modalidades.map((m) => ({ label: m.nome, value: m.id })),
-    [modalidades],
-  );
-  const modalidadeNomePorId = useMemo(
-    () => Object.fromEntries(modalidades.map((m) => [m.id, m.nome])),
-    [modalidades],
-  );
-  const PRODUTO_FIELDS = useMemo(() => buildProdutoFields(modalidadeOptions), [modalidadeOptions]);
-  const byName = (name) => PRODUTO_FIELDS.find((f) => f.name === name);
-
-  // Campos obrigatorios ainda em branco (usado no cadastro e na edicao da linha).
-  const faltandoObrigatorios = (values) =>
-    PRODUTO_FIELDS.filter((f) => f.required && !String(values[f.name] ?? "").trim());
-
-  const [form, setForm] = useState(() => emptyItem(PRODUTO_FIELDS));
-  const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [removendoId, setRemovendoId] = useState(null);
@@ -73,38 +48,27 @@ export default function Produto() {
 
   const emEdicaoNaTabela = Object.keys(editingRows).length > 0;
 
-  // Busca a lista de produtos cadastrados.
-  const loadProdutos = useCallback(async () => {
+  // Busca a lista de modalidades cadastradas.
+  const loadModalidades = useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.list(RESOURCE);
-      setProdutos(toList(data));
+      setModalidades(toList(data));
     } catch (err) {
-      setProdutos([]);
-      setError(err instanceof ApiError ? err.message : "Não foi possível carregar os produtos. Verifique o backend.");
+      setModalidades([]);
+      setError(err instanceof ApiError ? err.message : "Não foi possível carregar as modalidades. Verifique o backend.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Busca as modalidades cadastradas para popular o dropdown.
-  const loadModalidades = useCallback(async () => {
-    try {
-      const data = await api.list(MODALIDADE_RESOURCE);
-      setModalidades(toList(data));
-    } catch {
-      setModalidades([]);
-    }
-  }, []);
-
   useEffect(() => {
-    loadProdutos();
     loadModalidades();
-  }, [loadProdutos, loadModalidades]);
+  }, [loadModalidades]);
 
   const setField = (name, val) => setForm((v) => ({ ...v, [name]: val }));
 
-  // ---- Secao 1: cadastro de um novo produto -------------------------------
+  // ---- Secao 1: cadastro de uma nova modalidade ----------------------------
 
   // Abre a edicao guardando uma copia para eventual cancelamento.
   const startEdit = () => {
@@ -116,11 +80,11 @@ export default function Produto() {
   // Cancela: restaura a copia guardada e sai do modo de edicao.
   const cancelEdit = () => {
     setError(null);
-    setForm(snapshot.current ?? emptyItem(PRODUTO_FIELDS));
+    setForm(snapshot.current ?? emptyItem(MODALIDADE_FIELDS));
     setEditing(false);
   };
 
-  // Cadastra o produto (upsert por código no backend) e recarrega a lista.
+  // Cadastra a modalidade e recarrega a lista.
   const cadastrar = async () => {
     const faltando = faltandoObrigatorios(form);
     if (faltando.length) {
@@ -131,17 +95,17 @@ export default function Produto() {
     setSubmitting(true);
     setError(null);
     try {
-      const rec = await api.create(RESOURCE, buildPayload(PRODUTO_FIELDS, form));
+      const rec = await api.create(RESOURCE, buildPayload(MODALIDADE_FIELDS, form));
       if (!rec || rec.id == null) {
-        throw new Error("O backend não retornou o produto salvo.");
+        throw new Error("O backend não retornou a modalidade salva.");
       }
-      setForm(emptyItem(PRODUTO_FIELDS));
+      setForm(emptyItem(MODALIDADE_FIELDS));
       setEditing(false);
-      await loadProdutos();
+      await loadModalidades();
       toast.current?.show({
         severity: "success",
         summary: "Salvo",
-        detail: `Produto "${rec.nome}" cadastrado.`,
+        detail: `Modalidade "${rec.nome}" cadastrada.`,
         life: 2500,
       });
     } catch (err) {
@@ -157,7 +121,7 @@ export default function Produto() {
   const cellEditor = (f) => (options) =>
     renderInput(
       f,
-      `produto-${f.name}-${options.rowIndex}`,
+      `modalidade-${f.name}-${options.rowIndex}`,
       options.value,
       (_name, val) => options.editorCallback(val),
     );
@@ -178,33 +142,33 @@ export default function Produto() {
     setSubmitting(true);
     setError(null);
     try {
-      const rec = await api.update(RESOURCE, newData.id, buildPayload(PRODUTO_FIELDS, newData));
+      const rec = await api.update(RESOURCE, newData.id, buildPayload(MODALIDADE_FIELDS, newData));
       if (!rec || rec.id == null) {
-        throw new Error("O backend não retornou o produto salvo.");
+        throw new Error("O backend não retornou a modalidade salva.");
       }
-      await loadProdutos();
+      await loadModalidades();
       toast.current?.show({
         severity: "success",
         summary: "Salvo",
-        detail: `Produto "${rec.nome}" atualizado.`,
+        detail: `Modalidade "${rec.nome}" atualizada.`,
         life: 2500,
       });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : err.message || "Erro ao salvar. Verifique o backend.");
-      await loadProdutos();
+      await loadModalidades();
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Remove o produto (sem confirmacao) e recarrega a lista.
+  // Remove a modalidade (sem confirmacao) e recarrega a lista.
   const remover = async (row) => {
     setRemovendoId(row.id);
     setError(null);
     try {
       await api.remove(RESOURCE, row.id);
-      await loadProdutos();
-      toast.current?.show({ severity: "success", summary: "Excluído", detail: `Produto "${row.nome}" removido.`, life: 2500 });
+      await loadModalidades();
+      toast.current?.show({ severity: "success", summary: "Excluída", detail: `Modalidade "${row.nome}" removida.`, life: 2500 });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : err.message || "Erro ao excluir. Verifique o backend.");
     } finally {
@@ -219,8 +183,8 @@ export default function Produto() {
       <header className="fp-header">
         <span className="fp-eyebrow">Cadastro Positivo</span>
         <h1>
-          <i className="pi pi-box" />
-          Produtos
+          <i className="pi pi-tags" />
+          Modalidades
         </h1>
       </header>
 
@@ -230,12 +194,12 @@ export default function Produto() {
         </div>
       )}
 
-      {/* 1 - Cadastro de um novo produto */}
+      {/* 1 - Cadastro de uma nova modalidade */}
       <div className="fp-section">
         <SectionHead
           n={1}
           icon="pi pi-plus-circle"
-          title="Novo Produto"
+          title="Nova Modalidade"
           readonlyTag={false}
           editing={editing}
           saving={submitting}
@@ -246,8 +210,8 @@ export default function Produto() {
         />
         <div className="fp-section-body">
           <FieldsGrid
-            idPrefix="produto"
-            fields={PRODUTO_FIELDS}
+            idPrefix="modalidade"
+            fields={MODALIDADE_FIELDS}
             values={form}
             editing={editing}
             onChange={setField}
@@ -255,19 +219,19 @@ export default function Produto() {
         </div>
       </div>
 
-      {/* 2 - Produtos cadastrados (edicao na propria linha) */}
+      {/* 2 - Modalidades cadastradas (edicao na propria linha) */}
       <div className="fp-section">
         <SectionHead
           n={2}
           icon="pi pi-list"
-          title="Produtos Cadastrados"
-          counter={`${produtos.length} ${produtos.length === 1 ? "produto" : "produtos"}`}
+          title="Modalidades Cadastradas"
+          counter={`${modalidades.length} ${modalidades.length === 1 ? "modalidade" : "modalidades"}`}
           actions={
             <Button
               className="fp-icon-btn"
               icon={loading ? "pi pi-spin pi-spinner" : "pi pi-refresh"}
               outlined
-              onClick={loadProdutos}
+              onClick={loadModalidades}
               disabled={loading || emEdicaoNaTabela}
               aria-label="Recarregar"
             />
@@ -275,14 +239,14 @@ export default function Produto() {
         />
         <div className="fp-section-body">
           <DataTable
-            value={produtos}
+            value={modalidades}
             loading={loading}
             dataKey="id"
             size="small"
             stripedRows
-            paginator={produtos.length > 10}
+            paginator={modalidades.length > 10}
             rows={10}
-            emptyMessage="Nenhum produto cadastrado."
+            emptyMessage="Nenhuma modalidade cadastrada."
             className="fp-table"
             editMode="row"
             editingRows={editingRows}
@@ -293,25 +257,21 @@ export default function Produto() {
           >
             <Column field="id" header="Id" style={{ width: "80px" }} />
             <Column
-              field="codigo"
-              header="Código"
-              style={{ width: "160px" }}
-              editor={cellEditor(byName("codigo"))}
-            />
-            <Column field="nome" header="Nome" editor={cellEditor(byName("nome"))} />
-            <Column
-              field="modalidade_id"
+              field="nome"
               header="Modalidade"
-              style={{ width: "180px" }}
-              body={(row) => modalidadeNomePorId[row.modalidade_id] ?? "—"}
-              editor={cellEditor(byName("modalidade_id"))}
+              editor={cellEditor(byName("nome"))}
             />
             <Column
-              field="ativo"
-              header={byName("ativo").label}
-              style={{ width: "130px" }}
-              body={(row) => <BooleanTag field={byName("ativo")} value={row.ativo} />}
-              editor={cellEditor(byName("ativo"))}
+              field="descricao"
+              header="Descrição"
+              body={(row) => row.descricao ?? "—"}
+              editor={cellEditor(byName("descricao"))}
+            />
+            <Column
+              field="tipo_reporte"
+              header="Tipo de Reporte"
+              style={{ width: "180px" }}
+              editor={cellEditor(byName("tipo_reporte"))}
             />
             {/* Editar e excluir na mesma coluna: em edicao, os botoes do
                 row editor do PrimeReact viram cancelar / salvar. */}
@@ -330,7 +290,7 @@ export default function Produto() {
                         severity="secondary"
                         onClick={rowEditor.onCancelClick}
                         disabled={submitting}
-                        aria-label={`Cancelar edição do produto ${row.nome}`}
+                        aria-label={`Cancelar edição da modalidade ${row.nome}`}
                       />
                       <Button
                         icon={submitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
@@ -338,7 +298,7 @@ export default function Produto() {
                         rounded
                         onClick={rowEditor.onSaveClick}
                         disabled={submitting}
-                        aria-label={`Salvar produto ${row.nome}`}
+                        aria-label={`Salvar modalidade ${row.nome}`}
                       />
                     </>
                   ) : (
@@ -350,7 +310,7 @@ export default function Produto() {
                         severity="secondary"
                         onClick={rowEditor.onInitClick}
                         disabled={submitting || removendoId != null || emEdicaoNaTabela}
-                        aria-label={`Editar produto ${row.nome}`}
+                        aria-label={`Editar modalidade ${row.nome}`}
                       />
                       <Button
                         icon={removendoId === row.id ? "pi pi-spin pi-spinner" : "pi pi-trash"}
@@ -359,7 +319,7 @@ export default function Produto() {
                         severity="danger"
                         onClick={() => remover(row)}
                         disabled={submitting || removendoId != null || emEdicaoNaTabela}
-                        aria-label={`Excluir produto ${row.nome}`}
+                        aria-label={`Excluir modalidade ${row.nome}`}
                       />
                     </>
                   )}

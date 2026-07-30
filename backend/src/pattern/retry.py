@@ -6,7 +6,7 @@ from functools import wraps
 log = logging.getLogger(__name__)
 
 
-def linear_retry(max_retries=3, delay=1, step=0, exceptions=(Exception,), jitter=0):
+def linear_retry(max_retries=3, delay=2, step=0, exceptions=(Exception,), jitter=0):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

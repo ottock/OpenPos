@@ -6,6 +6,9 @@ from presentation.controller.fonteprincipal import FontePrincipalController
 from repository.produto import ProdutoRepository
 from domain.service.produto import ProdutoService
 from presentation.controller.produto import ProdutoController
+from repository.modalidade import ModalidadeRepository
+from domain.service.modalidade import ModalidadeService
+from presentation.controller.modalidade import ModalidadeController
 
 
 def get_fonte_principal_controller(db_client):
@@ -24,3 +27,9 @@ def get_produto_controller(db_client):
     repository = ProdutoRepository(db_client)
     service = ProdutoService(repository)
     return ProdutoController(service)
+
+
+def get_modalidade_controller(db_client):
+    repository = ModalidadeRepository(db_client)
+    service = ModalidadeService(repository)
+    return ModalidadeController(service)

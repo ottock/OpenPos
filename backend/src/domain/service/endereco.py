@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+from pattern.retry import linear_retry
+
 
 log = logging.getLogger(__name__)
 QUERY_ROOT = Path(__file__).resolve().parents[2] / "repository" / "postgres" / "query"
@@ -12,6 +14,7 @@ class EnderecoService:
         self.db_client = db_client
 
 
+    @linear_retry()
     def create_endereco(self, endereco):
         log.debug("Executing endereco create query")
         params = (
