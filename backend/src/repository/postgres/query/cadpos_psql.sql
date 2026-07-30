@@ -105,3 +105,17 @@ CREATE TABLE cadpos.Produtos (
         FOREIGN KEY (ModalidadeId)
         REFERENCES cadpos.Modalidades (Id)
 );
+
+-- Janela de execucoes: historico de geracao de arquivos (ACPO109 e demais
+-- leiautes futuros), sempre a partir dos dados ja cadastrados nas tabelas
+-- acima. Parametros guarda o envelope informado na execucao (ex.: CnpjIf,
+-- NrRms...) e ConteudoArquivo guarda o arquivo gerado, para conferencia e
+-- reenvio sem precisar executar novamente.
+CREATE TABLE cadpos.Execucao (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Layout           VARCHAR(20)  NOT NULL,
+    Parametros       JSONB        NOT NULL,
+    NomeArquivo      VARCHAR(255) NOT NULL,
+    ConteudoArquivo  TEXT         NOT NULL,
+    CriadoEm         TIMESTAMP    NOT NULL DEFAULT NOW()
+);

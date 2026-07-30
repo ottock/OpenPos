@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { id: "fonteprincipal", label: "Fonte Principal", icon: "pi pi-building" },
   { id: "produto", label: "Produtos", icon: "pi pi-box" },
   { id: "modalidade", label: "Modalidades", icon: "pi pi-tags" },
+  { id: "execucoes", label: "Execuções", icon: "pi pi-play-circle" },
 ];
 
 // Abaixo desta largura o dock deixa de ocupar espaco e vira um menu deslizante
