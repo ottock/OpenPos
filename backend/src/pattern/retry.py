@@ -6,7 +6,7 @@ from functools import wraps
 log = logging.getLogger(__name__)
 
 
-def _retry(max_retries, exceptions, delay_for):
+def linear_retry(max_retries=3, delay=1, step=0, exceptions=(Exception,), jitter=0):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -21,31 +21,15 @@ def _retry(max_retries, exceptions, delay_for):
                             max_retries,
                         )
                         raise
-                    delay = delay_for(attempt)
+                    wait = delay + step * (attempt-1) + random.uniform(0, jitter)
                     log.warning(
                         "%s failed (attempt %d/%d): %s. Retrying in %.1fs...",
                         func.__name__,
                         attempt,
                         max_retries,
                         exc,
-                        delay,
+                        wait,
                     )
-                    time.sleep(delay)
+                    time.sleep(wait)
         return wrapper
     return decorator
-
-
-def retry_constant(max_retries=3, delay=1, exceptions=(Exception,), jitter=0):
-    return _retry(
-        max_retries,
-        exceptions,
-        lambda _: delay + random.uniform(0, jitter),
-    )
-
-
-def retry_linear(max_retries=3, delay=1, exceptions=(Exception,), jitter=0):
-    return _retry(
-        max_retries,
-        exceptions,
-        lambda attempt: delay * attempt + random.uniform(0, jitter),
-    )
