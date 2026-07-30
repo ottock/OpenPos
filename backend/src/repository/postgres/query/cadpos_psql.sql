@@ -106,6 +106,14 @@ CREATE TABLE cadpos.Produtos (
         REFERENCES cadpos.Modalidades (Id)
 );
 
+-- Configuracao da aplicacao (singleton): pasta onde os arquivos gerados nas
+-- execucoes (ACPO109 e demais leiautes futuros) sao gravados em disco.
+CREATE TABLE cadpos.Configuracao (
+    Id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    DiretorioSalvamento VARCHAR(500) NOT NULL,
+    AtualizadoEm        TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
 -- Janela de execucoes: historico de geracao de arquivos (ACPO109 e demais
 -- leiautes futuros), sempre a partir dos dados ja cadastrados nas tabelas
 -- acima. Parametros guarda o envelope informado na execucao (ex.: CnpjIf,

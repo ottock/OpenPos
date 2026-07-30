@@ -12,6 +12,9 @@ from presentation.controller.modalidade import ModalidadeController
 from repository.execucao import ExecucaoRepository
 from domain.service.execucao import ExecucaoService
 from presentation.controller.execucao import ExecucaoController
+from repository.configuracao import ConfiguracaoRepository
+from domain.service.configuracao import ConfiguracaoService
+from presentation.controller.configuracao import ConfiguracaoController
 
 
 def get_fonte_principal_controller(db_client):
@@ -41,5 +44,12 @@ def get_modalidade_controller(db_client):
 def get_execucao_controller(db_client):
     repository = ExecucaoRepository(db_client)
     fonte_principal_repository = FontePrincipalRepository(db_client)
-    service = ExecucaoService(repository, fonte_principal_repository)
+    configuracao_repository = ConfiguracaoRepository(db_client)
+    service = ExecucaoService(repository, fonte_principal_repository, configuracao_repository)
     return ExecucaoController(service)
+
+
+def get_configuracao_controller(db_client):
+    repository = ConfiguracaoRepository(db_client)
+    service = ConfiguracaoService(repository)
+    return ConfiguracaoController(service)

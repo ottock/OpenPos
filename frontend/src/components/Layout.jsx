@@ -162,6 +162,18 @@ export default function Layout({ children, page, onNavigate }) {
           <div className="rail-footer">
             <button
               type="button"
+              className={`rail-item${page === "configuracoes" ? " active" : ""}`}
+              aria-current={page === "configuracoes" ? "page" : undefined}
+              onClick={() => navigate("configuracoes")}
+              title="Configuração"
+              aria-label="Configuração"
+            >
+              <i className="pi pi-cog" />
+              <span className="rail-label">Configuração</span>
+            </button>
+
+            <button
+              type="button"
               className="rail-item"
               onClick={toggleTheme}
               title={isDark ? "Tema claro" : "Tema escuro"}

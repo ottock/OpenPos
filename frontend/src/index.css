@@ -65,7 +65,7 @@ body { font-family: "JetBrains Mono", monospace; }
   transition: background 0.15s, color 0.15s;
 }
 .rail-item i { font-size: 17px; }
-.rail-label { font-size: 11px; line-height: 1.25; font-weight: 500; }
+.rail-label { font-size: 11px; line-height: 1.25; font-weight: 500; overflow-wrap: break-word; word-break: break-word; hyphens: auto; }
 .sidebar.collapsed .rail-label { display: none; }
 .rail-item:hover { background: var(--sb-hover); color: var(--sb-text-strong); }
 .rail-item.active { background: var(--sb-active-bg); color: var(--sb-active-text); }

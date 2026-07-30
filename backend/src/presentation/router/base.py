@@ -6,6 +6,7 @@ from presentation.router.fonteprincipal import router as fonte_principal_router
 from presentation.router.produto import router as produto_router
 from presentation.router.modalidade import router as modalidade_router
 from presentation.router.execucao import router as execucao_router
+from presentation.router.configuracao import router as configuracao_router
 
 
 log = logging.getLogger(__name__)
@@ -22,3 +23,4 @@ router.include_router(endereco_router)
 router.include_router(produto_router)
 router.include_router(modalidade_router)
 router.include_router(execucao_router)
+router.include_router(configuracao_router)

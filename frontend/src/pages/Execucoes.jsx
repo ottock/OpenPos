@@ -118,8 +118,10 @@ export default function Execucoes() {
       toast.current?.show({
         severity: "success",
         summary: "Execução concluída",
-        detail: `Arquivo ${rec.nome_arquivo} gerado com sucesso.`,
-        life: 3000,
+        detail: rec.caminho_salvo
+          ? `Arquivo ${rec.nome_arquivo} gerado e salvo em ${rec.caminho_salvo}.`
+          : `Arquivo ${rec.nome_arquivo} gerado com sucesso. Configure o diretório de salvamento em Configurações para gravá-lo automaticamente em disco.`,
+        life: 4000,
       });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : err.message || "Erro ao executar. Verifique o backend.");

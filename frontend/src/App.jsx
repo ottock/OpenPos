@@ -5,6 +5,7 @@ import FontePrincipal from "./pages/FontePrincipal.jsx";
 import Produto from "./pages/Produto.jsx";
 import Modalidade from "./pages/Modalidade.jsx";
 import Execucoes from "./pages/Execucoes.jsx";
+import Configuracoes from "./pages/Configuracoes.jsx";
 
 // Paginas disponiveis; a chave casa com o id dos itens do menu (Layout.jsx).
 const PAGES = {
@@ -12,6 +13,7 @@ const PAGES = {
   produto: Produto,
   modalidade: Modalidade,
   execucoes: Execucoes,
+  configuracoes: Configuracoes,
 };
 
 // Duracao da barra de carregamento exibida na troca de pagina (acompanha a

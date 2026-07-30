@@ -53,4 +53,9 @@ export const api = {
     request(`/${resource}/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   remove: (resource, id) => request(`/${resource}/${id}`, { method: "DELETE" }),
   health: () => request(`/health`),
+  // Configuracao e um recurso singleton (sem id): GET retorna o registro ou null.
+  configuracao: {
+    read: () => request(`/configuracao`),
+    save: (body) => request(`/configuracao`, { method: "PUT", body: JSON.stringify(body) }),
+  },
 };
