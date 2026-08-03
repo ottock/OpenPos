@@ -1,6 +1,6 @@
 import logging
 
-from pattern.retry import linear_retry
+from core.pattern.retry import linear_retry
 
 
 log = logging.getLogger(__name__)

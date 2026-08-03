@@ -18,39 +18,23 @@ import {
 // Recurso da API (backend: presentation/router/execucao.py).
 const RESOURCE = "execucoes";
 
-const DEFAULT_LAYOUT = LAYOUT_OPTIONS[0]?.value;
-
-// Campo sintetico (nao pertence a nenhum leiaute) usado para escolher qual
-// gerador rodar; os campos abaixo dele mudam conforme o leiaute selecionado.
-const LAYOUT_FIELD = {
-  name: "layout",
-  label: "Leiaute",
-  type: "select",
-  options: LAYOUT_OPTIONS,
-  required: true,
-  span: 12,
-};
-
-// Campos obrigatorios ainda em branco (usado ao executar).
+// Campos obrigatorios ainda em branco (usado ao iniciar).
 function faltandoObrigatorios(fields, values) {
   return fields.filter((f) => f.required && !String(values[f.name] ?? "").trim());
 }
 
 export default function Execucoes() {
-  const [layout, setLayout] = useState(DEFAULT_LAYOUT);
-  const [params, setParams] = useState(() => emptyItem(LAYOUTS[DEFAULT_LAYOUT].fields));
   const [execucoes, setExecucoes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [executando, setExecutando] = useState(false);
+  const [executandoLayout, setExecutandoLayout] = useState(null); // leiaute em execucao no momento
   const [baixandoId, setBaixandoId] = useState(null);
   const [error, setError] = useState(null);
 
-  const [editing, setEditing] = useState(false);
-  const snapshot = useRef(null); // copia da secao 1 ao entrar em edicao (para cancelar)
-  const toast = useRef(null);
+  // Leiaute com o formulario de parametros aberto (so os que tem campos proprios).
+  const [configurando, setConfigurando] = useState(null);
+  const [params, setParams] = useState({});
 
-  const camposAtuais = LAYOUTS[layout].fields;
-  const valoresAtuais = { layout, ...params };
+  const toast = useRef(null);
 
   // Busca o historico de execucoes.
   const loadExecucoes = useCallback(async () => {
@@ -70,50 +54,41 @@ export default function Execucoes() {
     loadExecucoes();
   }, [loadExecucoes]);
 
-  // Troca de leiaute reinicia os campos do envelope; demais campos so mudam o proprio valor.
+  // Abre o formulario de parametros de um leiaute (so os que tem campos proprios).
+  const abrirConfiguracao = (layoutValue) => {
+    setError(null);
+    setConfigurando(layoutValue);
+    setParams(emptyItem(LAYOUTS[layoutValue].fields));
+  };
+
+  const cancelarConfiguracao = () => {
+    setError(null);
+    setConfigurando(null);
+  };
+
   const setField = (name, value) => {
-    if (name === "layout") {
-      setLayout(value);
-      setParams(emptyItem(LAYOUTS[value].fields));
-      return;
-    }
     setParams((p) => ({ ...p, [name]: value }));
   };
 
-  const startEdit = () => {
-    setError(null);
-    snapshot.current = { layout, params };
-    setEditing(true);
-  };
-
-  const cancelEdit = () => {
-    setError(null);
-    const snap = snapshot.current;
-    if (snap) {
-      setLayout(snap.layout);
-      setParams(snap.params);
-    }
-    setEditing(false);
-  };
-
-  // Executa a geracao do leiaute selecionado a partir dos dados ja cadastrados.
-  const executar = async () => {
-    const faltando = faltandoObrigatorios([LAYOUT_FIELD, ...camposAtuais], valoresAtuais);
+  // Inicia a geracao de um leiaute da lista a partir dos dados ja cadastrados.
+  const iniciar = async (layoutValue) => {
+    const campos = LAYOUTS[layoutValue].fields;
+    const valores = configurando === layoutValue ? params : {};
+    const faltando = faltandoObrigatorios(campos, valores);
     if (faltando.length) {
       setError(`Preencha os campos obrigatórios: ${faltando.map((f) => f.label).join(", ")}.`);
       return;
     }
 
-    setExecutando(true);
+    setExecutandoLayout(layoutValue);
     setError(null);
     try {
-      const payload = { layout, parametros: buildPayload(camposAtuais, params) };
+      const payload = { layout: layoutValue, parametros: buildPayload(campos, valores) };
       const rec = await api.create(RESOURCE, payload);
       if (!rec || rec.id == null) {
         throw new Error("O backend não retornou a execução realizada.");
       }
-      setParams(emptyItem(camposAtuais));
-      setEditing(false);
+      setConfigurando(null);
       await loadExecucoes();
       toast.current?.show({
         severity: "success",
@@ -124,9 +99,9 @@ export default function Execucoes() {
         life: 4000,
       });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : err.message || "Erro ao executar. Verifique o backend.");
+      setError(err instanceof ApiError ? err.message : err.message || "Erro ao iniciar a execução. Verifique o backend.");
     } finally {
-      setExecutando(false);
+      setExecutandoLayout(null);
     }
   };
 
@@ -166,28 +141,96 @@ export default function Execucoes() {
         </div>
       )}
 
-      {/* 1 - Nova execucao */}
+      {/* 1 - Execucoes disponiveis */}
       <div className="fp-section">
         <SectionHead
           n={1}
           icon="pi pi-play"
-          title="Nova Execução"
+          title="Execuções Disponíveis"
           readonlyTag={false}
-          editing={editing}
-          saving={executando}
-          onEdit={startEdit}
-          onSave={executar}
-          onCancel={cancelEdit}
-          disabled={loading}
+          actions={<></>}
+          counter={`${LAYOUT_OPTIONS.length} ${LAYOUT_OPTIONS.length === 1 ? "leiaute" : "leiautes"}`}
         />
         <div className="fp-section-body">
-          <FieldsGrid
-            idPrefix="execucao"
-            fields={[LAYOUT_FIELD, ...camposAtuais]}
-            values={valoresAtuais}
-            editing={editing}
-            onChange={setField}
-          />
+          <DataTable
+            value={LAYOUT_OPTIONS}
+            dataKey="value"
+            size="small"
+            stripedRows
+            emptyMessage="Nenhum leiaute disponível."
+            className="fp-table"
+            expandedRows={configurando ? { [configurando]: true } : {}}
+            rowExpansionTemplate={(row) => (
+              <FieldsGrid
+                idPrefix={`execucao-${row.value}`}
+                fields={LAYOUTS[row.value].fields}
+                values={params}
+                editing
+                onChange={setField}
+              />
+            )}
+          >
+            <Column field="label" header="Leiaute" />
+            <Column
+              header="Ações"
+              style={{ width: "100px" }}
+              body={(row) => {
+                const campos = LAYOUTS[row.value].fields;
+                const temCampos = campos.length > 0;
+                const aberto = configurando === row.value;
+                const rodando = executandoLayout === row.value;
+                const bloqueado = executandoLayout != null;
+
+                if (temCampos && aberto) {
+                  return (
+                    <div className="fp-row-actions">
+                      <Button
+                        icon="pi pi-times"
+                        text
+                        rounded
+                        severity="secondary"
+                        onClick={cancelarConfiguracao}
+                        disabled={rodando}
+                        aria-label={`Cancelar configuração da execução de ${row.label}`}
+                      />
+                      <Button
+                        icon={rodando ? "pi pi-spin pi-spinner" : "pi pi-play"}
+                        text
+                        rounded
+                        onClick={() => iniciar(row.value)}
+                        disabled={rodando}
+                        aria-label={`Iniciar execução de ${row.label}`}
+                      />
+                    </div>
+                  );
+                }
+
+                if (temCampos) {
+                  return (
+                    <Button
+                      icon="pi pi-cog"
+                      text
+                      rounded
+                      onClick={() => abrirConfiguracao(row.value)}
+                      disabled={bloqueado}
+                      aria-label={`Configurar execução de ${row.label}`}
+                    />
+                  );
+                }
+
+                return (
+                  <Button
+                    icon={rodando ? "pi pi-spin pi-spinner" : "pi pi-play"}
+                    text
+                    rounded
+                    onClick={() => iniciar(row.value)}
+                    disabled={bloqueado}
+                    aria-label={`Iniciar execução de ${row.label}`}
+                  />
+                );
+              }}
+            />
+          </DataTable>
         </div>
       </div>
 
