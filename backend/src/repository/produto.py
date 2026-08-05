@@ -7,8 +7,6 @@ QUERY_ROOT = Path(__file__).resolve().parent / "postgres" / "query"
 
 
 class ProdutoRepository:
-
-
     def __init__(self, db_client):
         self.db_client = db_client
         self._produto_dir = QUERY_ROOT / "produto"

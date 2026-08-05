@@ -6,16 +6,12 @@ log = logging.getLogger(__name__)
 
 
 class ValidacaoError(Exception):
-
-
     def __init__(self, messages):
         self.messages = list(messages)
         super().__init__("; ".join(self.messages))
 
 
 class ConfiguracaoService:
-
-
     def __init__(self, repository):
         self.repository = repository
 

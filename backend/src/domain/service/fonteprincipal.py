@@ -7,8 +7,6 @@ log = logging.getLogger(__name__)
 
 
 class ValidacaoError(Exception):
-
-
     def __init__(self, messages):
         self.messages = list(messages)
         super().__init__("; ".join(self.messages))
@@ -26,8 +24,6 @@ CAMPOS_OBRIGATORIOS_CONTATO = {
 
 
 class FontePrincipalService:
-
-
     def __init__(self, repository, endereco_service=None):
         self.repository = repository
         self.endereco_service = endereco_service

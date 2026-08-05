@@ -10,8 +10,6 @@ QUERY_DIR = QUERY_ROOT / "endereco"
 
 
 class ValidacaoError(Exception):
-
-
     def __init__(self, messages):
         self.messages = list(messages)
         super().__init__("; ".join(self.messages))
@@ -27,8 +25,6 @@ CAMPOS_OBRIGATORIOS = {
 
 
 class EnderecoService:
-
-
     def __init__(self, db_client):
         self.db_client = db_client
 

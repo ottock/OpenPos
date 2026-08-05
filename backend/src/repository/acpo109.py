@@ -8,8 +8,6 @@ QUERY_ROOT = Path(__file__).resolve().parent / "postgres" / "query"
 
 
 class Acpo109Repository:
-
-
     def __init__(self, db_client):
         self.db_client = db_client
         self._execucao_dir = QUERY_ROOT / "execucao"
