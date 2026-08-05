@@ -45,13 +45,12 @@ body { font-family: "JetBrains Mono", monospace; }
 
 .rail-brand { display: flex; justify-content: center; padding: 2px 0 16px; }
 .brand-mark {
-  width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--primary-color), var(--cyan-500, #22d3ee));
-  color: #fff; font-weight: 700; font-size: 12px; letter-spacing: 0.04em;
+  color: #fff;
   display: grid; place-items: center;
-  transition: width 0.2s ease, height 0.2s ease;
 }
-.sidebar.collapsed .brand-mark { width: 34px; height: 34px; border-radius: 9px; font-size: 11px; }
+.brand-mark i { font-size: 18px; }
 
 .rail-nav { display: flex; flex-direction: column; flex: 1; }
 
@@ -409,7 +408,6 @@ body { font-family: "JetBrains Mono", monospace; }
      minimizado salvo para o desktop. */
   .sidebar.collapsed { width: 84px; }
   .sidebar.collapsed .rail-label { display: block; }
-  .sidebar.collapsed .brand-mark { width: 40px; height: 40px; border-radius: 11px; font-size: 12px; }
 
   .sidebar-backdrop {
     position: fixed; inset: 0; z-index: 1000;
@@ -423,5 +421,5 @@ body { font-family: "JetBrains Mono", monospace; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar, .sidebar-dock, .brand-mark { transition: none; }
+  .sidebar, .sidebar-dock { transition: none; }
 }

@@ -113,7 +113,9 @@ export default function Layout({ children, page, onNavigate }) {
         >
           <i className="pi pi-bars" />
         </button>
-        <span className="brand-mark">OP</span>
+        <span className="brand-mark" title="Cadastro Positivo - Lei 12.414/2011">
+          <i className="pi pi-shield" />
+        </span>
         <strong className="topbar-title">Cadastro Positivo</strong>
       </header>
 
@@ -128,7 +130,7 @@ export default function Layout({ children, page, onNavigate }) {
         <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
           <div className="rail-brand">
             <span className="brand-mark" title="Cadastro Positivo - Lei 12.414/2011">
-              OP
+              <i className="pi pi-shield" />
             </span>
           </div>
 

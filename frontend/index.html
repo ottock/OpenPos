@@ -25,30 +25,38 @@
       #app-splash {
         position: fixed; inset: 0; z-index: 9999;
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 18px; background: #0f172a; color: #fff;
+        gap: 1.25rem; background: #0b1220;
         transition: opacity 0.25s ease;
       }
       #app-splash.app-splash-hide { opacity: 0; pointer-events: none; }
       .app-splash-mark {
-        width: 48px; height: 48px; border-radius: 13px;
-        background: linear-gradient(135deg, #3b82f6, #7c3aed);
-        display: grid; place-items: center;
-        font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 14px;
+        width: 64px; height: 64px; border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #22d3ee);
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+      }
+      .app-splash-mark svg {
+        width: 34px; height: 34px;
+        stroke: #ffffff; fill: none;
+        stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
       }
       .app-splash-spinner {
-        width: 30px; height: 30px; border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.2); border-top-color: #fff;
+        width: 26px; height: 26px; border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.18); border-top-color: #3b82f6;
         animation: app-splash-spin 0.8s linear infinite;
       }
+      /* O spinner continua girando mesmo com "reduzir movimento" ativo: parado,
+         ele parece uma pagina travada em vez de "carregando". */
       @keyframes app-splash-spin { to { transform: rotate(360deg); } }
-      @media (prefers-reduced-motion: reduce) {
-        .app-splash-spinner { animation-duration: 2.4s; }
-      }
     </style>
   </head>
   <body>
     <div id="app-splash" aria-hidden="true">
-      <span class="app-splash-mark">OP</span>
+      <span class="app-splash-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 21s7-3.5 7-10V5l-7-3-7 3v6c0 6.5 7 10 7 10z"></path>
+        </svg>
+      </span>
       <span class="app-splash-spinner"></span>
     </div>
     <div id="root"></div>
