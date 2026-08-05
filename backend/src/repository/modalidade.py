@@ -7,6 +7,8 @@ QUERY_ROOT = Path(__file__).resolve().parent / "postgres" / "query"
 
 
 class ModalidadeRepository:
+
+
     def __init__(self, db_client):
         self.db_client = db_client
         self._modalidade_dir = QUERY_ROOT / "modalidade"

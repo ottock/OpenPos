@@ -9,6 +9,8 @@ from domain.model.fonteprincipal import (
     IdentificacaoCreate,
     PessoaAutorizadaCreate,
 )
+from domain.service.fonteprincipal import ValidacaoError
+from domain.service.endereco import ValidacaoError as EnderecoValidacaoError
 
 
 log = logging.getLogger(__name__)
@@ -23,6 +25,9 @@ async def create_identificacao(request: Request, identificacao: IdentificacaoCre
         controller = get_fonte_principal_controller(request.app.state.db)
         response = controller.create_identificacao(identificacao.model_dump())
         return response
+    except (ValidacaoError, EnderecoValidacaoError) as exc:
+        log.info("Identificacao bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create identificacao")
         raise HTTPException(
@@ -39,6 +44,9 @@ async def create_fonte_principal(request: Request, fonte_principal: FontePrincip
         controller = get_fonte_principal_controller(request.app.state.db)
         response = controller.create_fonte_principal(fonte_principal.model_dump())
         return response
+    except ValidacaoError as exc:
+        log.info("Fonte principal bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create fonte principal")
         raise HTTPException(
@@ -71,6 +79,9 @@ async def create_contato_tecnico(request: Request, contato_tecnico: ContatoTecni
         controller = get_fonte_principal_controller(request.app.state.db)
         response = controller.create_contato_tecnico(contato_tecnico.model_dump())
         return response
+    except ValidacaoError as exc:
+        log.info("Contato tecnico bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create contato tecnico")
         raise HTTPException(

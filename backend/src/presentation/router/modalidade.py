@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from presentation.controller.base import get_modalidade_controller
 from domain.model.modalidade import ModalidadeCreate, ModalidadeUpdate
+from domain.service.modalidade import ValidacaoError
 
 
 log = logging.getLogger(__name__)
@@ -16,6 +17,9 @@ async def create_modalidade(request: Request, modalidade: ModalidadeCreate):
         controller = get_modalidade_controller(request.app.state.db)
         response = controller.create_modalidade(modalidade.model_dump())
         return response
+    except ValidacaoError as exc:
+        log.info("Modalidade bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create modalidade")
         if "duplicate key" in str(exc).lower():
@@ -50,6 +54,9 @@ async def update_modalidade(request: Request, modalidade_id: int, modalidade: Mo
         log.debug("Received request to update modalidade %s", modalidade_id)
         controller = get_modalidade_controller(request.app.state.db)
         response = controller.update_modalidade(modalidade_id, modalidade.model_dump())
+    except ValidacaoError as exc:
+        log.info("Modalidade bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to update modalidade")
         if "duplicate key" in str(exc).lower():

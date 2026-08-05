@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 
 
 class Acpo109GerarRequest(BaseModel):
-    # Atributos do elemento raiz EnvoCfg (envelope da remessa - ACPO109.xsd).
     cnpj_if: str = Field(..., pattern=r"^[0-9A-Z]{1,12}[0-9]{2}$")
     cnpj_gbd: str = Field(..., pattern=r"^[0-9A-Z]{1,12}[0-9]{2}$")
     nr_rms: int = Field(..., ge=1, le=999999999)

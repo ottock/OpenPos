@@ -2,14 +2,6 @@ import { useEffect, useState } from "react";
 import { api } from "../api/client.js";
 import { applyTheme, getStoredTheme } from "../theme/theme.js";
 
-// Icone do PrimeIcons conforme o status da API.
-const HEALTH_ICON = {
-  online: "pi pi-check-circle",
-  degradado: "pi pi-exclamation-triangle",
-  offline: "pi pi-times-circle",
-  checando: "pi pi-spin pi-spinner",
-};
-
 // Itens do rail. O id casa com as paginas registradas em App.jsx.
 // Um item pode ter "children" (mesmo formato, sem icone): nesse caso ele nao
 // navega, abre o painel de submenu ao lado do rail.
@@ -18,6 +10,7 @@ const NAV_ITEMS = [
   { id: "produto", label: "Produtos", icon: "pi pi-box" },
   { id: "modalidade", label: "Modalidades", icon: "pi pi-tags" },
   { id: "execucoes", label: "Execuções", icon: "pi pi-play-circle" },
+  { id: "configuracoes", label: "Configuração", icon: "pi pi-cog" },
 ];
 
 // Abaixo desta largura o dock deixa de ocupar espaco e vira um menu deslizante
@@ -162,40 +155,26 @@ export default function Layout({ children, page, onNavigate }) {
           <div className="rail-footer">
             <button
               type="button"
-              className={`rail-item${page === "configuracoes" ? " active" : ""}`}
-              aria-current={page === "configuracoes" ? "page" : undefined}
-              onClick={() => navigate("configuracoes")}
-              title="Configuração"
-              aria-label="Configuração"
-            >
-              <i className="pi pi-cog" />
-              <span className="rail-label">Configuração</span>
-            </button>
-
-            <button
-              type="button"
-              className="rail-item"
+              className="rail-util"
               onClick={toggleTheme}
               title={isDark ? "Tema claro" : "Tema escuro"}
               aria-label="Alternar tema"
             >
               <i className={isDark ? "pi pi-sun" : "pi pi-moon"} />
-              <span className="rail-label">Tema</span>
             </button>
 
-            <div className={`rail-item rail-health health-${health}`} title={`Backend: ${health}`}>
-              <i className={`health-icon ${HEALTH_ICON[health]}`} />
-              <span className="rail-label">Backend</span>
+            <div className={`rail-util rail-health health-${health}`} title={`Backend: ${health}`} aria-label={`Backend: ${health}`}>
+              <span className="health-dot" />
             </div>
 
             <button
               type="button"
-              className="rail-toggle"
+              className="rail-util"
               onClick={onToggleClick}
               title={isMobile ? "Fechar menu" : collapsed ? "Maximizar" : "Minimizar"}
               aria-label={isMobile ? "Fechar menu" : collapsed ? "Maximizar menu" : "Minimizar menu"}
             >
-              <i className={isMobile ? "pi pi-times" : "pi pi-align-left"} />
+              <i className={isMobile ? "pi pi-times" : collapsed ? "pi pi-angle-double-right" : "pi pi-angle-double-left"} />
             </button>
           </div>
         </aside>

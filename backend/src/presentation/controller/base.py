@@ -9,9 +9,9 @@ from presentation.controller.produto import ProdutoController
 from repository.modalidade import ModalidadeRepository
 from domain.service.modalidade import ModalidadeService
 from presentation.controller.modalidade import ModalidadeController
-from repository.execucao import ExecucaoRepository
-from domain.service.execucao import ExecucaoService
-from presentation.controller.execucao import ExecucaoController
+from repository.acpo109 import Acpo109Repository
+from domain.service.acpo109 import Acpo109Service
+from presentation.controller.acpo109 import Acpo109Controller
 from repository.configuracao import ConfiguracaoRepository
 from domain.service.configuracao import ConfiguracaoService
 from presentation.controller.configuracao import ConfiguracaoController
@@ -41,12 +41,12 @@ def get_modalidade_controller(db_client):
     return ModalidadeController(service)
 
 
-def get_execucao_controller(db_client):
-    repository = ExecucaoRepository(db_client)
+def get_acpo109_controller(db_client):
+    repository = Acpo109Repository(db_client)
     fonte_principal_repository = FontePrincipalRepository(db_client)
     configuracao_repository = ConfiguracaoRepository(db_client)
-    service = ExecucaoService(repository, fonte_principal_repository, configuracao_repository)
-    return ExecucaoController(service)
+    service = Acpo109Service(fonte_principal_repository, repository, configuracao_repository)
+    return Acpo109Controller(service)
 
 
 def get_configuracao_controller(db_client):

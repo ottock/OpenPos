@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from presentation.controller.base import get_configuracao_controller
 from domain.model.configuracao import ConfiguracaoSave
-from domain.service.errors import ValidacaoError
+from domain.service.configuracao import ValidacaoError
 
 
 log = logging.getLogger(__name__)

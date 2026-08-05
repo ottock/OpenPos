@@ -14,14 +14,12 @@ class FontePrincipalCreate(BaseModel):
 
 
 class IdentificacaoCreate(BaseModel):
-    # Fonte
     cnpj: str
     nome_completo: str
     tipo: str = "OUTRO"
     ispb_fonte: str
     ispb_cip: str
     url_site: Optional[str] = None
-    # Endereco
     cep: str
     logradouro: str
     numero: Optional[str] = None

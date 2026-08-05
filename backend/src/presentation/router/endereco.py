@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from presentation.controller.base import get_endereco_controller
 from domain.model.endereco import EnderecoCreate
+from domain.service.endereco import ValidacaoError
 
 
 log = logging.getLogger(__name__)
@@ -16,6 +17,9 @@ async def create_endereco(request: Request, endereco: EnderecoCreate):
         controller = get_endereco_controller(request.app.state.db)
         response = controller.create_endereco(endereco.model_dump())
         return response
+    except ValidacaoError as exc:
+        log.info("Endereco bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create endereco")
         raise HTTPException(

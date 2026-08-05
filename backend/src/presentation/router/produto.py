@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from presentation.controller.base import get_produto_controller
 from domain.model.produto import ProdutoCreate, ProdutoUpdate
+from domain.service.produto import ValidacaoError
 
 
 log = logging.getLogger(__name__)
@@ -16,6 +17,9 @@ async def create_produto(request: Request, produto: ProdutoCreate):
         controller = get_produto_controller(request.app.state.db)
         response = controller.create_produto(produto.model_dump())
         return response
+    except ValidacaoError as exc:
+        log.info("Produto bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to create produto")
         raise HTTPException(
@@ -45,6 +49,9 @@ async def update_produto(request: Request, produto_id: int, produto: ProdutoUpda
         log.debug("Received request to update produto %s", produto_id)
         controller = get_produto_controller(request.app.state.db)
         response = controller.update_produto(produto_id, produto.model_dump())
+    except ValidacaoError as exc:
+        log.info("Produto bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
     except Exception as exc:
         log.exception("Failed to update produto")
         if "duplicate key" in str(exc).lower():

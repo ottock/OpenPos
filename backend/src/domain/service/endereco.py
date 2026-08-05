@@ -9,13 +9,33 @@ QUERY_ROOT = Path(__file__).resolve().parents[2] / "repository" / "postgres" / "
 QUERY_DIR = QUERY_ROOT / "endereco"
 
 
+class ValidacaoError(Exception):
+
+
+    def __init__(self, messages):
+        self.messages = list(messages)
+        super().__init__("; ".join(self.messages))
+
+
+CAMPOS_OBRIGATORIOS = {
+    "cep": "CEP",
+    "logradouro": "Logradouro",
+    "bairro": "Bairro",
+    "municipio": "Município",
+    "uf": "UF",
+}
+
+
 class EnderecoService:
+
+
     def __init__(self, db_client):
         self.db_client = db_client
 
 
     @linear_retry()
     def create_endereco(self, endereco):
+        self._validate_endereco(endereco)
         log.debug("Executing endereco create query")
         params = (
             endereco["cep"],
@@ -38,3 +58,13 @@ class EnderecoService:
         result = self.db_client.execute_query_path(str(QUERY_DIR / "read_endereco.sql"))
         log.info("Endereco list retrieved successfully")
         return result
+
+
+    @staticmethod
+    def _validate_endereco(endereco):
+        erros = []
+        for campo, rotulo in CAMPOS_OBRIGATORIOS.items():
+            if not str(endereco.get(campo) or "").strip():
+                erros.append(f"Informe o campo \"{rotulo}\" do endereço.")
+        if erros:
+            raise ValidacaoError(erros)

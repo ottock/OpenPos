@@ -1,13 +1,21 @@
 import logging
 from pathlib import Path
 
-from domain.service.errors import ValidacaoError
-
 
 log = logging.getLogger(__name__)
 
 
+class ValidacaoError(Exception):
+
+
+    def __init__(self, messages):
+        self.messages = list(messages)
+        super().__init__("; ".join(self.messages))
+
+
 class ConfiguracaoService:
+
+
     def __init__(self, repository):
         self.repository = repository
 
@@ -21,12 +29,12 @@ class ConfiguracaoService:
         if not diretorio:
             raise ValidacaoError(["Informe o diretório onde os arquivos ACPO serão salvos."])
         if not Path(diretorio).is_absolute():
-            raise ValidacaoError([f'Informe um caminho absoluto (ex.: "C:\\ACPO"). Recebido: "{diretorio}".'])
+            raise ValidacaoError([f"Informe um caminho absoluto (ex.: \"C:\\ACPO\"). Recebido: \"{diretorio}\"."])
 
         try:
             Path(diretorio).mkdir(parents=True, exist_ok=True)
         except OSError as exc:
-            raise ValidacaoError([f'Não foi possível usar o diretório "{diretorio}": {exc.strerror or exc}.']) from exc
+            raise ValidacaoError([f"Não foi possível usar o diretório \"{diretorio}\": {exc.strerror or exc}."]) from exc
 
         dados = {"diretorio_salvamento": diretorio}
         existente = self.repository.select_configuracao()

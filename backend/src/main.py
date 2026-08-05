@@ -16,8 +16,8 @@ def main():
             CORSMiddleware,
             allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
             allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
+            allow_methods=['*'],
+            allow_headers=['*'],
         )
         db = PostgresClient(
             host=config.db_host,
@@ -37,7 +37,6 @@ def main():
     except Exception:
         log.exception("Failed to start the backend")
         raise
-
 
 
 if __name__ == "__main__":

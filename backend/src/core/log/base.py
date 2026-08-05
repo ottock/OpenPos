@@ -1,29 +1,19 @@
-# imports
 import glob
 import json
 import logging
 import logging.config
 from pathlib import Path
 
-# constants
+
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 LOG_DIR = PROJECT_ROOT / "log"
 CONFIG_FILE = Path(__file__).resolve().parent / "configs" / "base_config.json"
 
 
-# functions
 _VALID_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
 
 
 def validate_configuration(cfg: dict) -> None:
-    """Validate the logging dictConfig format.
-
-    Args:
-        cfg: Configuration dictionary to validate.
-
-    Raises:
-        ValueError: If the configuration is invalid.
-    """
     if cfg.get("version") != 1:
         raise ValueError("'version' must be 1")
 
@@ -73,14 +63,6 @@ def validate_configuration(cfg: dict) -> None:
 
 
 def retrieve_configuration() -> dict:
-    """Load and validate logger configuration from JSON file.
-
-    Returns:
-        Dictionary with logging configuration.
-
-    Raises:
-        ValueError: If the configuration format is invalid.
-    """
     with CONFIG_FILE.open(encoding="utf-8") as file:
         cfg = json.load(file)
     validate_configuration(cfg)
@@ -94,15 +76,6 @@ def setup_logger(
     log_filename: str = "app.log",
     logger_name: str | None = None,
 ) -> logging.Logger:
-    """Configure the root logger once and return a logger instance.
-
-    Args:
-        log_filename: Name of the log file.
-        logger_name: Logger name; returns root logger if None.
-
-    Returns:
-        Configured Logger instance.
-    """
     global _configured
 
     if not _configured:
@@ -124,11 +97,6 @@ def setup_logger(
 
 
 def _remove_existing_logs(log_file: Path) -> None:
-    """Remove existing log file and any rotated variants.
-
-    Args:
-        log_file: Path to the log file to remove.
-    """
     if log_file.exists():
         log_file.unlink()
 

@@ -7,6 +7,8 @@ QUERY_ROOT = Path(__file__).resolve().parent / "postgres" / "query"
 
 
 class FontePrincipalRepository:
+
+
     def __init__(self, db_client):
         self.db_client = db_client
         self._fonte_dir = QUERY_ROOT / "fonteprincipal"
