@@ -212,7 +212,7 @@ export default function FontePrincipal() {
     <section className="page fp-page">
       <Toast ref={toast} position="bottom-right" />
 
-      <header className="fp-header fp-header-center">
+      <header className="fp-header">
         <span className="fp-eyebrow">Cadastro Positivo</span>
         <h1>
           <i className="pi pi-building" />

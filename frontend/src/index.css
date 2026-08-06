@@ -380,7 +380,6 @@ body,
 
 /* Cabecalho da pagina (eyebrow + titulo + subtitulo). */
 .fp-header { margin-bottom: 20px; }
-.fp-header.fp-header-center { text-align: center; }
 .fp-eyebrow {
   display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--primary-color); margin-bottom: 4px;
