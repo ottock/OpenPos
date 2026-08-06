@@ -1,27 +1,28 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-// CSS base do PrimeReact + fonte de icones (PrimeIcons). Importados de forma
-// estatica para o Vite empacotar/servir as fontes corretamente (dev e build).
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-import App from "./App.jsx";
-import { applyTheme, getStoredTheme } from "./theme/theme.js";
-import "./index.css";
+// imports
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.jsx'
+import { applyTheme, getStoredTheme } from './presentation/assets/theme.js'
+import './index.css'
 
-// Injeta o tema salvo (claro/escuro) antes de renderizar.
-applyTheme(getStoredTheme());
+// Apply the saved theme (sets #theme-link href to a bundled CSS url) before the
+// first paint, so there is no flash of the wrong theme.
+applyTheme(getStoredTheme())
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-  </StrictMode>
-);
+  </StrictMode>,
+)
 
-// Remove o splash estatico (index.html) assim que o app renderiza.
-const splash = document.getElementById("app-splash");
+// Fade out and remove the inline splash (see index.html) now that React has
+// mounted. Runs after the first paint so the fade itself is visible.
+const splash = document.getElementById('splash')
 if (splash) {
   requestAnimationFrame(() => {
-    splash.classList.add("app-splash-hide");
-    setTimeout(() => splash.remove(), 300);
-  });
+    splash.classList.add('splash-hidden')
+    splash.addEventListener('transitionend', () => splash.remove(), { once: true })
+    // Safety net in case the transition never fires (e.g. display:none ancestor).
+    setTimeout(() => splash.remove(), 600)
+  })
 }

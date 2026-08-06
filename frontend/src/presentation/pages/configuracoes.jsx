@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
-import { api, ApiError } from "../api/client.js";
+import { api, ApiError } from "../../infrastructure/api/client.js";
 import { SectionHead, FieldsGrid } from "../components/FormSection.jsx";
 
 // Secao unica: pasta onde os arquivos gerados na janela de Execucoes
@@ -43,6 +43,7 @@ export default function Configuracoes() {
       .finally(() => setLoading(false));
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount idiom
   useEffect(load, []);
 
   const setField = (name, value) => setValues((v) => ({ ...v, [name]: value }));

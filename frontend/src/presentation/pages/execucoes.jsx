@@ -4,8 +4,8 @@ import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { api, ApiError } from "../api/client.js";
-import { formatDateTime } from "../utils/format.js";
+import { api, ApiError } from "../../infrastructure/api/client.js";
+import { formatDateTime } from "../../utils/format.js";
 import { SectionHead, toList } from "../components/FormSection.jsx";
 
 // Recurso da API (backend: presentation/router/acpo109.py).
@@ -35,6 +35,7 @@ export default function Execucoes() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount idiom
     loadHistorico();
   }, [loadHistorico]);
 

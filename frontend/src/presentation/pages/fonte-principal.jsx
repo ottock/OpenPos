@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
-import { api, ApiError } from "../api/client.js";
-import { ENUMS } from "../config/entities.js";
+import { api, ApiError } from "../../infrastructure/api/client.js";
+import { ENUMS } from "../../config/entities.js";
 import {
   SectionHead,
   FieldsGrid,
@@ -108,6 +108,23 @@ export default function FontePrincipal() {
   const toast = useRef(null);
   const snapshots = useRef({}); // copia da secao ao entrar em edicao (para cancelar)
 
+  // Busca as secoes repetiveis vinculadas a fonte e popula os estados.
+  const loadSecoes = async (fonteId, alive = true) => {
+    const forFonte = (list) =>
+      toList(list).filter((it) => it.fonte_principal_id === fonteId);
+    const [ct, ca, pa] = await Promise.all([
+      api.list(CONTATO_RESOURCE).catch(() => []),
+      api.list(CANAL_RESOURCE).catch(() => []),
+      api.list(PESSOA_RESOURCE).catch(() => []),
+    ]);
+    if (!alive) return;
+    const withFallback = (items, fields) =>
+      items.length ? items : [emptyItem(fields)];
+    setContatos(withFallback(forFonte(ct), CONTATO_FIELDS));
+    setCanais(withFallback(forFonte(ca), CANAL_FIELDS));
+    setPessoas(withFallback(forFonte(pa), PESSOA_FIELDS));
+  };
+
   // Carrega o registro atual da Fonte Principal (e suas secoes repetiveis) ao montar.
   useEffect(() => {
     let alive = true;
@@ -125,25 +142,7 @@ export default function FontePrincipal() {
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Busca as secoes repetiveis vinculadas a fonte e popula os estados.
-  const loadSecoes = async (fonteId, alive = true) => {
-    const forFonte = (list) =>
-      toList(list).filter((it) => it.fonte_principal_id === fonteId);
-    const [ct, ca, pa] = await Promise.all([
-      api.list(CONTATO_RESOURCE).catch(() => []),
-      api.list(CANAL_RESOURCE).catch(() => []),
-      api.list(PESSOA_RESOURCE).catch(() => []),
-    ]);
-    if (!alive) return;
-    const withFallback = (items, fields) =>
-      items.length ? items : [emptyItem(fields)];
-    setContatos(withFallback(forFonte(ct), CONTATO_FIELDS));
-    setCanais(withFallback(forFonte(ca), CANAL_FIELDS));
-    setPessoas(withFallback(forFonte(pa), PESSOA_FIELDS));
-  };
 
   const isEditing = (id) => !!editing[id];
   const setEdit = (id, on) => setEditing((e) => ({ ...e, [id]: on }));
@@ -213,7 +212,7 @@ export default function FontePrincipal() {
     <section className="page fp-page">
       <Toast ref={toast} position="bottom-right" />
 
-      <header className="fp-header">
+      <header className="fp-header fp-header-center">
         <span className="fp-eyebrow">Cadastro Positivo</span>
         <h1>
           <i className="pi pi-building" />

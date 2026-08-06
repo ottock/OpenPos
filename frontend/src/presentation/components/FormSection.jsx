@@ -1,3 +1,8 @@
+// This module intentionally mixes components with plain helper functions
+// (emptyItem, toList, buildPayload, displayValue, renderInput) so every
+// cadastro page shares one source of truth for field rendering; that layout
+// disables Fast Refresh for the file, which only affects dev-time HMR.
+/* eslint-disable react-refresh/only-export-components */
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
 import { Dropdown } from "primereact/dropdown";
@@ -9,7 +14,7 @@ import {
   cleanCep,
   formatCep,
   formatCpfCnpj,
-} from "../utils/format.js";
+} from "../../utils/format.js";
 
 // Componentes de UI compartilhados pelas telas de cadastro (Fonte Principal,
 // Produto, ...) para que todas as secoes tenham o mesmo card e o mesmo fluxo

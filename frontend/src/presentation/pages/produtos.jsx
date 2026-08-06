@@ -4,7 +4,7 @@ import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { api, ApiError } from "../api/client.js";
+import { api, ApiError } from "../../infrastructure/api/client.js";
 import {
   SectionHead,
   FieldsGrid,
@@ -98,6 +98,7 @@ export default function Produto() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount idiom
     loadProdutos();
     loadModalidades();
   }, [loadProdutos, loadModalidades]);

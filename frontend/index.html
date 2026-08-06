@@ -10,54 +10,96 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap"
     />
-    <!-- Estilos inline: precisam existir antes do bundle carregar, para o
-         splash aparecer imediatamente (nao depende de CSS/JS externo). -->
+
     <style>
-      /* Zera a margem padrao do navegador e reserva o espaco da barra de
-         rolagem desde o primeiro paint (html sempre com scrollbar-gutter).
-         Sem isso, a barra de rolagem so aparece quando o app termina de
-         montar atras do splash, mudando a largura disponivel: isso deixava
-         o splash com os icones deslocados a esquerda enquanto era exibido
-         e, ao sumir, deslocava a pagina (Fonte Principal etc.) para a
-         esquerda de novo quando a barra finalmente aparecia. */
-      html, body { margin: 0; }
-      html { overflow-y: scroll; }
-      #app-splash {
-        position: fixed; inset: 0; z-index: 9999;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 1.25rem; background: #0b1220;
+      /* Fixes the scrollbar gutter from first paint so mounting the app never
+         shifts content horizontally when the scrollbar appears/disappears. */
+      html {
+        overflow-y: scroll;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'JetBrains Mono', monospace;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      /* Critical splash CSS: inlined so it renders immediately, independent of
+         the app bundle/theme CSS (which load asynchronously). */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        background: #0b1220;
         transition: opacity 0.25s ease;
       }
-      #app-splash.app-splash-hide { opacity: 0; pointer-events: none; }
-      .app-splash-mark {
-        width: 64px; height: 64px; border-radius: 16px;
-        display: flex; align-items: center; justify-content: center;
+
+      #splash.splash-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #splash .splash-mark {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: linear-gradient(135deg, #3b82f6, #22d3ee);
         box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
       }
-      .app-splash-mark svg {
-        width: 34px; height: 34px;
-        stroke: #ffffff; fill: none;
-        stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+
+      #splash .splash-mark svg {
+        width: 34px;
+        height: 34px;
+        stroke: #ffffff;
+        fill: none;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
       }
-      .app-splash-spinner {
-        width: 26px; height: 26px; border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.18); border-top-color: #3b82f6;
-        animation: app-splash-spin 0.8s linear infinite;
+
+      #splash .splash-spinner {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.18);
+        border-top-color: #3b82f6;
+        animation: splash-spin 0.8s linear infinite;
       }
-      /* O spinner continua girando mesmo com "reduzir movimento" ativo: parado,
-         ele parece uma pagina travada em vez de "carregando". */
-      @keyframes app-splash-spin { to { transform: rotate(360deg); } }
+
+      /* The loading spinner keeps spinning under reduced motion: a frozen
+         spinner reads as a hung page rather than "processing". */
+      @keyframes splash-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
+
+    <!-- href is set at runtime by src/presentation/assets/theme.js (bundled CSS url) -->
+    <link rel="stylesheet" id="theme-link" href="" />
   </head>
   <body>
-    <div id="app-splash" aria-hidden="true">
-      <span class="app-splash-mark">
+    <div id="splash" aria-hidden="true">
+      <div class="splash-mark">
         <svg viewBox="0 0 24 24">
           <path d="M12 21s7-3.5 7-10V5l-7-3-7 3v6c0 6.5 7 10 7 10z"></path>
         </svg>
-      </span>
-      <span class="app-splash-spinner"></span>
+      </div>
+      <div class="splash-spinner"></div>
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
