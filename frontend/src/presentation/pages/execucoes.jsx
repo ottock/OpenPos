@@ -11,6 +11,9 @@ import { SectionHead, toList } from "../components/FormSection.jsx";
 // Recurso da API (backend: presentation/router/acpo109.py).
 const RESOURCE = "acpo109";
 
+// Execucoes que podem ser disparadas a partir desta janela.
+const EXECUCOES_DISPONIVEIS = [{ id: "acpo109", nome: "ACPO109 - Envio de Configuração" }];
+
 export default function Execucoes() {
   const [historico, setHistorico] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,22 +103,42 @@ export default function Execucoes() {
         </div>
       )}
 
-      {/* 1 - Geracao do ACPO109 */}
+      {/* 1 - Execucoes disponiveis */}
       <div className="fp-section">
         <SectionHead
           n={1}
           icon="pi pi-play"
-          title="ACPO109 - Envio de Configuração"
+          title="Execuções Disponíveis"
+          counter={`${EXECUCOES_DISPONIVEIS.length} ${EXECUCOES_DISPONIVEIS.length === 1 ? "execução" : "execuções"}`}
           readonlyTag={false}
-          actions={
-            <Button
-              label="Gerar"
-              icon={gerando ? "pi pi-spin pi-spinner" : "pi pi-play"}
-              onClick={gerar}
-              disabled={gerando}
-            />
-          }
+          actions={<></>}
         />
+        <div className="fp-section-body">
+          <DataTable
+            value={EXECUCOES_DISPONIVEIS}
+            dataKey="id"
+            size="small"
+            stripedRows
+            emptyMessage="Nenhuma execução disponível."
+            className="fp-table"
+          >
+            <Column field="nome" header="Execução" />
+            <Column
+              header="Ações"
+              style={{ width: "100px" }}
+              body={(row) => (
+                <Button
+                  icon={gerando ? "pi pi-spin pi-spinner" : "pi pi-play"}
+                  text
+                  rounded
+                  onClick={gerar}
+                  disabled={gerando}
+                  aria-label={`Executar ${row.nome}`}
+                />
+              )}
+            />
+          </DataTable>
+        </div>
       </div>
 
       {/* 2 - Historico de geracoes */}
