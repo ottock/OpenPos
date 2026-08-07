@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Response
 
 from presentation.router.endereco import router as endereco_router
 from presentation.router.fonteprincipal import router as fonte_principal_router
@@ -10,12 +10,24 @@ from presentation.router.configuracao import router as configuracao_router
 
 
 log = logging.getLogger(__name__)
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
 
 @router.get("/health")
-async def health_check():
-    return {"status": "ok"}
+async def health_check(request: Request, response: Response):
+    db_status = "ok"
+    db = getattr(request.app.state, "db", None)
+    try:
+        if db is None:
+            raise RuntimeError("Database client not initialized")
+        db.execute_query("SELECT 1")
+    except Exception:
+        log.exception("Health check failed: database is unreachable")
+        db_status = "error"
+
+    status = "ok" if db_status == "ok" else "error"
+    response.status_code = 200 if status == "ok" else 503
+    return {"status": status, "database": db_status}
 
 
 router.include_router(fonte_principal_router)

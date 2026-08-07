@@ -111,7 +111,7 @@ backend/
 - **Cadastro de Modalidade**: CRUD completo, usado para tipificar produtos e o reporte.
 - **Configuração**: leitura/gravação de uma configuração única (`GET/PUT /configuracao`), atualmente usada para definir o diretório onde os XMLs gerados são salvos em disco.
 - **Geração do ACPO109**: `POST /acpo109/gerar` monta o número de remessa (`nr_rms`) automaticamente a partir do histórico, valida os dados cadastrais obrigatórios do layout, gera o XML (`xml.etree.ElementTree`), grava o arquivo em disco (se houver diretório configurado) e registra a execução no banco. `GET /acpo109` lista o histórico de execuções.
-- **Health check**: `GET /api/health` para verificação simples de disponibilidade.
+- **Health check**: `GET /health` para verificação simples de disponibilidade.
 
 ## Modelo de domínio
 
@@ -187,8 +187,6 @@ python src/main.py
 É necessário um PostgreSQL acessível com as tabelas esperadas pelas queries em `src/repository/postgres/query/`.
 
 ## Referência da API
-
-Todas as rotas abaixo têm o prefixo `/api`.
 
 | Método | Rota                                              | Descrição                                       |
 |--------|----------------------------------------------------|--------------------------------------------------|
