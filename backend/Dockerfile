@@ -3,7 +3,7 @@ FROM python:3.14.6-trixie
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /backend
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc && \
@@ -19,7 +19,7 @@ COPY README.md .
 
 RUN mkdir -p log
 
-ENV PYTHONPATH=/app/src
+ENV PYTHONPATH=/backend/src
 
 EXPOSE 8000
 

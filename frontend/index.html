@@ -61,14 +61,8 @@
         box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
       }
 
-      #splash .splash-mark svg {
-        width: 34px;
-        height: 34px;
-        stroke: #ffffff;
-        fill: none;
-        stroke-width: 2.5;
-        stroke-linecap: round;
-        stroke-linejoin: round;
+      #splash .splash-mark span {
+        font-family: system-ui, -apple-system, sans-serif;
       }
 
       #splash .splash-spinner {
@@ -95,9 +89,7 @@
   <body>
     <div id="splash" aria-hidden="true">
       <div class="splash-mark">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 21s7-3.5 7-10V5l-7-3-7 3v6c0 6.5 7 10 7 10z"></path>
-        </svg>
+        <span style="font-weight:800;font-size:18px;letter-spacing:-0.5px;color:#fff;">POS</span>
       </div>
       <div class="splash-spinner"></div>
     </div>

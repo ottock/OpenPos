@@ -110,7 +110,7 @@ export default function Layout({ children }) {
           onClick={() => setMobileOpen((v) => !v)}
         />
         <div className="brand-mark" aria-hidden="true">
-          <i className="pi pi-shield" />
+          <span className="brand-text">POS</span>
         </div>
         <span className="mobile-topbar-title">{APP_NAME}</span>
       </div>
@@ -125,7 +125,7 @@ export default function Layout({ children }) {
         <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
           <div className="rail-brand">
             <div className="brand-mark" aria-hidden="true">
-              <i className="pi pi-shield" />
+              <span className="brand-text">POS</span>
             </div>
           </div>
 

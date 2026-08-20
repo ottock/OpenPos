@@ -15,14 +15,25 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// Fade out and remove the inline splash (see index.html) now that React has
-// mounted. Runs after the first paint so the fade itself is visible.
-const splash = document.getElementById('splash')
-if (splash) {
+function dismissSplash() {
+  const splash = document.getElementById('splash')
+  if (!splash) return
   requestAnimationFrame(() => {
     splash.classList.add('splash-hidden')
     splash.addEventListener('transitionend', () => splash.remove(), { once: true })
-    // Safety net in case the transition never fires (e.g. display:none ancestor).
     setTimeout(() => splash.remove(), 600)
   })
+}
+
+const themeLink = document.getElementById('theme-link')
+if (themeLink && themeLink.getAttribute('href')) {
+  if (themeLink.sheet) {
+    dismissSplash()
+  } else {
+    themeLink.addEventListener('load', dismissSplash, { once: true })
+    themeLink.addEventListener('error', dismissSplash, { once: true })
+    setTimeout(dismissSplash, 3000)
+  }
+} else {
+  dismissSplash()
 }
