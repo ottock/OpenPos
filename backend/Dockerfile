@@ -5,6 +5,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /backend
 
+COPY src ./src
+
+ENV PYTHONPATH=/backend/src
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc && \
     rm -rf /var/lib/apt/lists/*
@@ -12,14 +16,6 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
-
-COPY src ./src
-
-COPY README.md .
-
-RUN mkdir -p log
-
-ENV PYTHONPATH=/backend/src
 
 EXPOSE 8000
 
