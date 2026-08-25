@@ -83,8 +83,12 @@
       }
     </style>
 
-    <!-- href is set at runtime by src/presentation/assets/theme.js (bundled CSS url) -->
-    <link rel="stylesheet" id="theme-link" href="" />
+    <!-- Both themes are preloaded (href set at runtime by theme.js) and left in
+         the DOM at once; switching themes just flips which link is disabled,
+         so every component restyles in the same paint instead of waiting on
+         a fresh network fetch for the other theme's CSS. -->
+    <link rel="stylesheet" id="theme-link-light" href="" />
+    <link rel="stylesheet" id="theme-link-dark" href="" />
   </head>
   <body>
     <div id="splash" aria-hidden="true">

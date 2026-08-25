@@ -14,14 +14,28 @@ export function getStoredTheme() {
   }
 }
 
-export function applyTheme(theme) {
-  const link = document.getElementById("theme-link");
-  if (!link) return;
+// Sets the href of both theme <link> tags (if not already set) so both
+// stylesheets are fetched up front, once, regardless of which is active.
+function ensureThemeLinksLoaded() {
+  const lightLink = document.getElementById("theme-link-light");
+  const darkLink = document.getElementById("theme-link-dark");
+  if (lightLink && !lightLink.getAttribute("href")) lightLink.setAttribute("href", lightThemeUrl);
+  if (darkLink && !darkLink.getAttribute("href")) darkLink.setAttribute("href", darkThemeUrl);
+  return { lightLink, darkLink };
+}
 
-  const href = theme === "dark" ? darkThemeUrl : lightThemeUrl;
-  if (link.getAttribute("href") !== href) {
-    link.setAttribute("href", href);
-  }
+export function applyTheme(theme) {
+  const { lightLink, darkLink } = ensureThemeLinksLoaded();
+  if (!lightLink || !darkLink) return;
+
+  // Both stylesheets are already loaded, so this only flips which one the
+  // "media" query matches - a synchronous, instant swap (no network
+  // round-trip, no re-parse) so every component picks up the new theme
+  // variables in the same paint. (Toggling the `disabled` IDL property
+  // instead can make the browser drop a sheet that hasn't finished loading
+  // yet and never re-apply it, so `media` is the reliable knob here.)
+  lightLink.media = theme === "light" ? "all" : "not all";
+  darkLink.media = theme === "dark" ? "all" : "not all";
 
   try {
     localStorage.setItem("theme", theme);

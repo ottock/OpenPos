@@ -5,9 +5,10 @@ import App from './App.jsx'
 import { applyTheme, getStoredTheme } from './presentation/assets/theme.js'
 import './index.css'
 
-// Apply the saved theme (sets #theme-link href to a bundled CSS url) before the
-// first paint, so there is no flash of the wrong theme.
-applyTheme(getStoredTheme())
+// Apply the saved theme (loads both theme stylesheets and enables the right
+// one) before the first paint, so there is no flash of the wrong theme.
+const initialTheme = getStoredTheme()
+applyTheme(initialTheme)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,7 +26,7 @@ function dismissSplash() {
   })
 }
 
-const themeLink = document.getElementById('theme-link')
+const themeLink = document.getElementById(initialTheme === 'dark' ? 'theme-link-dark' : 'theme-link-light')
 if (themeLink && themeLink.getAttribute('href')) {
   if (themeLink.sheet) {
     dismissSplash()
