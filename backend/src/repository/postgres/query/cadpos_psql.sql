@@ -62,7 +62,7 @@ CREATE TABLE cadpos.AtendimentoConsumidor (
     FontePrincipalId BIGINT       NOT NULL,
     Departamento     VARCHAR(100),
     Email            VARCHAR(255),
-    TipoTelefone     VARCHAR(20),
+    TipoTelefone     VARCHAR(60),
     CodPais          VARCHAR(3),
     DDD              VARCHAR(2),
     Telefone         VARCHAR(9),

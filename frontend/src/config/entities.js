@@ -26,10 +26,10 @@ export const ENUMS = {
   ],
   // Tipo de telefone (lista fechada do leiaute ACPO109 - Atendimento ao Consumidor).
   tipoTelefone: [
-    { value: "COMERCIAL", label: "Comercial" },
-    { value: "CELULAR", label: "Celular" },
-    { value: "GRATUITO", label: "Gratuito (0800)" },
-    { value: "FAX", label: "Fax" },
+    { value: "ACESSO DO EXTERIOR", label: "Acesso do exterior" },
+    { value: "CAPITAIS E REGIOES METROPOLITANAS", label: "Capitais e regiões metropolitanas" },
+    { value: "DEFICIENCIA AUDITIVA/FALA", label: "Deficiência auditiva/fala" },
+    { value: "DEMAIS REGIOES", label: "Demais regiões" },
   ],
   // Unidades federativas do Brasil.
   uf: [

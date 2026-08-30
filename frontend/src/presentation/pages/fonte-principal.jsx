@@ -194,9 +194,14 @@ export default function FontePrincipal() {
     setSubmitting(true);
     setError(null);
     try {
-      const novos = items.filter((it) => it.id == null && !isEmptyItem(it, fields));
-      for (const it of novos) {
-        await api.create(resource, { ...buildPayload(fields, it), fonte_principal_id: record.id });
+      const paraSalvar = items.filter((it) => !isEmptyItem(it, fields));
+      for (const it of paraSalvar) {
+        const payload = { ...buildPayload(fields, it), fonte_principal_id: record.id };
+        if (it.id != null) {
+          await api.update(resource, it.id, payload);
+        } else {
+          await api.create(resource, payload);
+        }
       }
       await loadSecoes(record.id);
       setEdit(id, false);

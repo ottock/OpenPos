@@ -60,6 +60,21 @@ class FontePrincipalRepository:
         return self._run_one(self._contato_dir / "create_contatotecnico.sql", params)
 
 
+    def update_contato_tecnico(self, contato_tecnico_id, contato_tecnico):
+        params = (
+            contato_tecnico["fonte_principal_id"],
+            contato_tecnico["nome"],
+            contato_tecnico.get("email"),
+            contato_tecnico.get("departamento"),
+            contato_tecnico.get("cargo"),
+            contato_tecnico.get("ddd"),
+            contato_tecnico.get("telefone"),
+            contato_tecnico.get("ramal"),
+            contato_tecnico_id,
+        )
+        return self._run_one(self._contato_dir / "update_contatotecnico.sql", params)
+
+
     def select_contato_tecnico(self):
         return self._run(self._contato_dir / "read_contatotecnico.sql")
 
@@ -79,6 +94,22 @@ class FontePrincipalRepository:
         )
 
 
+    def update_atendimento_consumidor(self, atendimento_consumidor_id, atendimento_consumidor):
+        params = (
+            atendimento_consumidor["fonte_principal_id"],
+            atendimento_consumidor.get("departamento"),
+            atendimento_consumidor.get("email"),
+            atendimento_consumidor.get("tipo_telefone"),
+            atendimento_consumidor.get("cod_pais"),
+            atendimento_consumidor.get("ddd"),
+            atendimento_consumidor.get("telefone"),
+            atendimento_consumidor_id,
+        )
+        return self._run_one(
+            self._atendimento_dir / "update_atendimentoconsumidor.sql", params
+        )
+
+
     def select_atendimento_consumidor(self):
         return self._run(self._atendimento_dir / "read_atendimentoconsumidor.sql")
 
@@ -93,6 +124,19 @@ class FontePrincipalRepository:
             pessoa_autorizada.get("telefone"),
         )
         return self._run_one(self._pessoa_dir / "create_pessoaautorizada.sql", params)
+
+
+    def update_pessoa_autorizada(self, pessoa_autorizada_id, pessoa_autorizada):
+        params = (
+            pessoa_autorizada["fonte_principal_id"],
+            pessoa_autorizada.get("nome"),
+            pessoa_autorizada.get("email"),
+            pessoa_autorizada.get("cpf"),
+            pessoa_autorizada.get("ddd"),
+            pessoa_autorizada.get("telefone"),
+            pessoa_autorizada_id,
+        )
+        return self._run_one(self._pessoa_dir / "update_pessoaautorizada.sql", params)
 
 
     def select_pessoa_autorizada(self):

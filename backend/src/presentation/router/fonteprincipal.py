@@ -106,6 +106,27 @@ async def read_contato_tecnico(request: Request):
         ) from exc
 
 
+@router.put("/contatotecnico/{contato_tecnico_id}")
+async def update_contato_tecnico(request: Request, contato_tecnico_id: int, contato_tecnico: ContatoTecnicoCreate):
+    try:
+        log.debug("Received request to update contato tecnico %s", contato_tecnico_id)
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.update_contato_tecnico(contato_tecnico_id, contato_tecnico.model_dump())
+    except ValidacaoError as exc:
+        log.info("Contato tecnico bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
+    except Exception as exc:
+        log.exception("Failed to update contato tecnico")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating contato tecnico.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Contato técnico não encontrado.")
+    return response
+
+
 @router.post("/atendimentoconsumidor", status_code=201)
 @router.post("/atendimento_consumidor", status_code=201)
 async def create_atendimento_consumidor(request: Request, atendimento_consumidor: AtendimentoConsumidorCreate):
@@ -138,6 +159,24 @@ async def read_atendimento_consumidor(request: Request):
         ) from exc
 
 
+@router.put("/atendimentoconsumidor/{atendimento_consumidor_id}")
+async def update_atendimento_consumidor(request: Request, atendimento_consumidor_id: int, atendimento_consumidor: AtendimentoConsumidorCreate):
+    try:
+        log.debug("Received request to update atendimento consumidor %s", atendimento_consumidor_id)
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.update_atendimento_consumidor(atendimento_consumidor_id, atendimento_consumidor.model_dump())
+    except Exception as exc:
+        log.exception("Failed to update atendimento consumidor")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating atendimento consumidor.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Atendimento ao consumidor não encontrado.")
+    return response
+
+
 @router.post("/pessoaautorizada", status_code=201)
 @router.post("/pessoa_autorizada", status_code=201)
 async def create_pessoa_autorizada(request: Request, pessoa_autorizada: PessoaAutorizadaCreate):
@@ -168,3 +207,21 @@ async def read_pessoa_autorizada(request: Request):
             status_code=500,
             detail="Internal error while fetching pessoa autorizada.",
         ) from exc
+
+
+@router.put("/pessoaautorizada/{pessoa_autorizada_id}")
+async def update_pessoa_autorizada(request: Request, pessoa_autorizada_id: int, pessoa_autorizada: PessoaAutorizadaCreate):
+    try:
+        log.debug("Received request to update pessoa autorizada %s", pessoa_autorizada_id)
+        controller = get_fonte_principal_controller(request.app.state.db)
+        response = controller.update_pessoa_autorizada(pessoa_autorizada_id, pessoa_autorizada.model_dump())
+    except Exception as exc:
+        log.exception("Failed to update pessoa autorizada")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating pessoa autorizada.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Pessoa autorizada não encontrada.")
+    return response

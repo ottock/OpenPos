@@ -70,6 +70,14 @@ class FontePrincipalService:
         return result
 
 
+    def update_contato_tecnico(self, contato_tecnico_id, contato_tecnico):
+        self._validate_fields(contato_tecnico, CAMPOS_OBRIGATORIOS_CONTATO, "Contato Técnico")
+        result = self.repository.update_contato_tecnico(contato_tecnico_id, contato_tecnico)
+        if result:
+            log.info("Contato tecnico updated successfully")
+        return result
+
+
     def read_contato_tecnico(self):
         return self.repository.select_contato_tecnico()
 
@@ -81,6 +89,13 @@ class FontePrincipalService:
         return result
 
 
+    def update_atendimento_consumidor(self, atendimento_consumidor_id, atendimento_consumidor):
+        result = self.repository.update_atendimento_consumidor(atendimento_consumidor_id, atendimento_consumidor)
+        if result:
+            log.info("Atendimento consumidor updated successfully")
+        return result
+
+
     def read_atendimento_consumidor(self):
         return self.repository.select_atendimento_consumidor()
 
@@ -89,6 +104,13 @@ class FontePrincipalService:
     def create_pessoa_autorizada(self, pessoa_autorizada):
         result = self.repository.insert_pessoa_autorizada(pessoa_autorizada)
         log.info("Pessoa autorizada created successfully")
+        return result
+
+
+    def update_pessoa_autorizada(self, pessoa_autorizada_id, pessoa_autorizada):
+        result = self.repository.update_pessoa_autorizada(pessoa_autorizada_id, pessoa_autorizada)
+        if result:
+            log.info("Pessoa autorizada updated successfully")
         return result
 
 
