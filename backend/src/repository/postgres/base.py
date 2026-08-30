@@ -22,6 +22,7 @@ class PostgresClient:
                 password=self.password,
                 port=self.port,
                 dbname=self.database,
+                client_encoding="UTF8"
             )
             log.info(
                 "Created PostgreSQL connection pool (min=%s, max=%s) for %s on %s:%s",

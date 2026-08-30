@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C.UTF-8"
     volumes:
       - openpos-db-data:/var/lib/postgresql/data
       - ./backend/src/repository/postgres/query/cadpos_psql.sql:/docker-entrypoint-initdb.d/cadpos_psql.sql
@@ -33,6 +34,8 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      DB_HOST: host.docker.internal
     working_dir: /backend
     volumes:
       - ./backend/log:/backend/log
