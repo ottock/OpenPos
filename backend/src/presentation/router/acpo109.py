@@ -40,3 +40,21 @@ async def list_acpo109(request: Request):
             status_code=500,
             detail="Internal error while fetching ACPO109 history.",
         ) from exc
+
+
+@router.delete("/acpo109", status_code=204)
+async def reset_acpo109(request: Request):
+    try:
+        log.debug("Received request to reset ACPO109 history")
+        controller = get_acpo109_controller(request.app.state.db)
+        response = controller.reset_history()
+    except Exception as exc:
+        log.exception("Failed to reset ACPO109 history")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while resetting ACPO109 history.",
+        ) from exc
+
+    if response is False:
+        raise HTTPException(status_code=404, detail="No ACPO109 history found to reset.")
+    return None

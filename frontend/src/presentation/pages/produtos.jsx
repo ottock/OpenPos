@@ -351,7 +351,7 @@ export default function Produto() {
                         rounded
                         severity="secondary"
                         onClick={rowEditor.onInitClick}
-                        disabled={submitting || removendoId != null || emEdicaoNaTabela}
+                        disabled={submitting || removendoId != null || !!editingRows[row.id]}
                         aria-label={`Editar produto ${row.nome}`}
                       />
                       <Button
@@ -360,7 +360,7 @@ export default function Produto() {
                         rounded
                         severity="danger"
                         onClick={() => remover(row)}
-                        disabled={submitting || removendoId != null || emEdicaoNaTabela}
+                        disabled={submitting || removendoId != null || !!editingRows[row.id]}
                         aria-label={`Excluir produto ${row.nome}`}
                       />
                     </>

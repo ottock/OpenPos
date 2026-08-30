@@ -34,3 +34,7 @@ class Acpo109Repository:
 
     def select_execucao(self):
         return self._run(self._execucao_dir / "read_execucao.sql")
+
+
+    def delete_execucao(self):
+        return self._run_one(self._execucao_dir / "delete_execucao.sql")

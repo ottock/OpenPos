@@ -18,6 +18,7 @@ export default function Execucoes() {
   const [historico, setHistorico] = useState([]);
   const [loading, setLoading] = useState(true);
   const [gerando, setGerando] = useState(false);
+  const [resetando, setResetando] = useState(false);
   const [baixandoId, setBaixandoId] = useState(null);
   const [error, setError] = useState(null);
 
@@ -85,6 +86,25 @@ export default function Execucoes() {
     }
   };
 
+  const resetHistorico = async () => {
+    setResetando(true);
+    setError(null);
+    try {
+      await api.remove(RESOURCE);
+      await loadHistorico();
+      toast.current?.show({
+        severity: "success",
+        summary: "Histórico resetado",
+        detail: "As execuções realizadas foram removidas.",
+        life: 2500,
+      });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : err.message || "Erro ao resetar o histórico. Verifique o backend.");
+    } finally {
+      setResetando(false);
+    }
+  };
+
   return (
     <section className="page fp-page">
       <Toast ref={toast} position="bottom-right" />
@@ -149,14 +169,26 @@ export default function Execucoes() {
           title="Execuções Realizadas"
           counter={`${historico.length} ${historico.length === 1 ? "execução" : "execuções"}`}
           actions={
-            <Button
-              className="fp-icon-btn"
-              icon={loading ? "pi pi-spin pi-spinner" : "pi pi-refresh"}
-              outlined
-              onClick={loadHistorico}
-              disabled={loading}
-              aria-label="Recarregar"
-            />
+            <>
+              <Button
+                className="fp-icon-btn"
+                icon={resetando ? "pi pi-spin pi-spinner" : "pi pi-trash"}
+                outlined
+                severity="danger"
+                onClick={resetHistorico}
+                disabled={loading || resetando || historico.length === 0}
+                aria-label="Resetar execuções"
+                title="Resetar execuções"
+              />
+              <Button
+                className="fp-icon-btn"
+                icon={loading ? "pi pi-spin pi-spinner" : "pi pi-refresh"}
+                outlined
+                onClick={loadHistorico}
+                disabled={loading || resetando}
+                aria-label="Recarregar"
+              />
+            </>
           }
         />
         <div className="fp-section-body">

@@ -63,6 +63,13 @@ class Acpo109Service:
         return self.execucao_repository.select_execucao()
 
 
+    def reset_history(self):
+        result = self.execucao_repository.delete_execucao()
+        if result is not None:
+            log.info("ACPO109 execution history reset successfully")
+        return result
+
+
     def _automatic_remittance(self, nr_rms, seql_rms, cd_ocr=None):
         fonte = self._load_source()
         return {

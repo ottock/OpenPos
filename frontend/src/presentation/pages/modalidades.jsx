@@ -311,7 +311,7 @@ export default function Modalidade() {
                         rounded
                         severity="secondary"
                         onClick={rowEditor.onInitClick}
-                        disabled={submitting || removendoId != null || emEdicaoNaTabela}
+                        disabled={submitting || removendoId != null || !!editingRows[row.id]}
                         aria-label={`Editar modalidade ${row.nome}`}
                       />
                       <Button
@@ -320,7 +320,7 @@ export default function Modalidade() {
                         rounded
                         severity="danger"
                         onClick={() => remover(row)}
-                        disabled={submitting || removendoId != null || emEdicaoNaTabela}
+                        disabled={submitting || removendoId != null || !!editingRows[row.id]}
                         aria-label={`Excluir modalidade ${row.nome}`}
                       />
                     </>
