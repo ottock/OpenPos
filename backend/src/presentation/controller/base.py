@@ -12,10 +12,7 @@ from presentation.controller.modalidade import ModalidadeController
 from repository.acpo109 import Acpo109Repository
 from domain.service.acpo109 import Acpo109Service
 from presentation.controller.acpo109 import Acpo109Controller
-from repository.configuracao import ConfiguracaoRepository
-from domain.service.configuracao import ConfiguracaoService
-from presentation.controller.configuracao import ConfiguracaoController
-
+from module.configuracao import ConfiguracaoFacade
 
 def get_fonte_principal_controller(db_client):
     repository = FontePrincipalRepository(db_client)
@@ -44,12 +41,10 @@ def get_modalidade_controller(db_client):
 def get_acpo109_controller(db_client):
     repository = Acpo109Repository(db_client)
     fonte_principal_repository = FontePrincipalRepository(db_client)
-    configuracao_repository = ConfiguracaoRepository(db_client)
+    configuracao_repository = ConfiguracaoFacade.create_repository(db_client)
     service = Acpo109Service(fonte_principal_repository, repository, configuracao_repository)
     return Acpo109Controller(service)
 
 
 def get_configuracao_controller(db_client):
-    repository = ConfiguracaoRepository(db_client)
-    service = ConfiguracaoService(repository)
-    return ConfiguracaoController(service)
+    return ConfiguracaoFacade().create_controller(db_client)

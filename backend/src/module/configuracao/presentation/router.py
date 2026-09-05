@@ -2,12 +2,13 @@ import logging
 from fastapi import APIRouter, HTTPException, Request
 
 from presentation.controller.base import get_configuracao_controller
-from domain.model.configuracao import ConfiguracaoSave
-from domain.service.configuracao import ValidacaoError
+from module.configuracao import ConfiguracaoFacade
 
 
 log = logging.getLogger(__name__)
 router = APIRouter(tags=["configuracao"])
+ConfiguracaoSave = ConfiguracaoFacade.model
+ValidacaoError = ConfiguracaoFacade.validation_error
 
 
 @router.get("/configuracao")
