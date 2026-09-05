@@ -2,6 +2,8 @@ import logging
 import psycopg2
 import psycopg2.pool
 
+from core.pattern.retry import linear_retry
+
 
 log = logging.getLogger(__name__)
 
@@ -13,8 +15,13 @@ class PostgresClient:
         self.password = password
         self.port = port
         self.database = database
+        self.pool = self._create_pool(minconn, maxconn)
+
+
+    @linear_retry()
+    def _create_pool(self, minconn: int, maxconn: int):
         try:
-            self.pool = psycopg2.pool.ThreadedConnectionPool(
+            pool = psycopg2.pool.ThreadedConnectionPool(
                 minconn,
                 maxconn,
                 host=self.host,
@@ -28,11 +35,13 @@ class PostgresClient:
                 "Created PostgreSQL connection pool (min=%s, max=%s) for %s on %s:%s",
                 minconn, maxconn, self.database, self.host, self.port,
             )
+            return pool
         except Exception as e:
             log.exception("Failed to create PostgreSQL connection pool")
-            raise RuntimeError(f"Failed to create connection pool: {e}")
+            raise RuntimeError(f"Failed to create connection pool: {e}") from e
 
 
+    @linear_retry()
     def execute_query(self, query: str, params=None):
         conn = self.pool.getconn()
         try:
