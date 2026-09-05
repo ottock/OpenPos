@@ -9,7 +9,7 @@ QUERY_ROOT = Path(__file__).resolve().parent / "query"
 class ConfiguracaoRepository:
     def __init__(self, db_client):
         self.db_client = db_client
-        self._configuracao_dir = QUERY_ROOT / "configuracao"
+        self._configuracao_dir = QUERY_ROOT
 
 
     def _run(self, query_path, params=None):
