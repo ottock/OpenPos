@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro Positivo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap"
+    />
+
+    <style>
+      /* Fixes the scrollbar gutter from first paint so mounting the app never
+         shifts content horizontally when the scrollbar appears/disappears. */
+      html {
+        overflow-y: scroll;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'JetBrains Mono', monospace;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      /* Critical splash CSS: inlined so it renders immediately, independent of
+         the app bundle/theme CSS (which load asynchronously). */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        background: #0b1220;
+        transition: opacity 0.25s ease;
+      }
+
+      #splash.splash-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #splash .splash-mark {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #22d3ee);
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+      }
+
+      #splash .splash-mark span {
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      #splash .splash-spinner {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.18);
+        border-top-color: #3b82f6;
+        animation: splash-spin 0.8s linear infinite;
+      }
+
+      /* The loading spinner keeps spinning under reduced motion: a frozen
+         spinner reads as a hung page rather than "processing". */
+      @keyframes splash-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+
+    <!-- Both themes are preloaded (href set at runtime by theme.js) and left in
+         the DOM at once; switching themes just flips which link is disabled,
+         so every component restyles in the same paint instead of waiting on
+         a fresh network fetch for the other theme's CSS. -->
+    <link rel="stylesheet" id="theme-link-light" href="" />
+    <link rel="stylesheet" id="theme-link-dark" href="" />
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <div class="splash-mark">
+        <span style="font-weight:800;font-size:18px;letter-spacing:-0.5px;color:#fff;">POS</span>
+      </div>
+      <div class="splash-spinner"></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

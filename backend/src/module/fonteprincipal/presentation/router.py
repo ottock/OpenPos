@@ -1,0 +1,231 @@
+import logging
+from fastapi import APIRouter, HTTPException, Request
+
+from module.fonteprincipal import FontePrincipalFacade
+from module.fonteprincipal.domain.model import (
+    AtendimentoConsumidorCreate,
+    ContatoTecnicoCreate,
+    FontePrincipalCreate,
+    IdentificacaoCreate,
+    PessoaAutorizadaCreate,
+)
+from module.endereco.domain.service import ValidacaoError as EnderecoValidacaoError
+from module.fonteprincipal.domain.service import ValidacaoError
+
+
+log = logging.getLogger(__name__)
+router = APIRouter(tags=["fonteprincipal"])
+
+
+def get_controller(db_client):
+    return FontePrincipalFacade().create_controller(db_client)
+
+
+@router.post("/fonteprincipal/identificacao", status_code=201)
+@router.post("/fonte_principal/identificacao", status_code=201)
+async def create_identificacao(request: Request, identificacao: IdentificacaoCreate):
+    try:
+        log.debug("Received request to create identificacao")
+        controller = get_controller(request.app.state.db)
+        response = controller.create_identificacao(identificacao.model_dump())
+        return response
+    except (ValidacaoError, EnderecoValidacaoError) as exc:
+        log.info("Identificacao bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
+    except Exception as exc:
+        log.exception("Failed to create identificacao")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating identificacao.",
+        ) from exc
+
+
+@router.post("/fonteprincipal", status_code=201)
+@router.post("/fonte_principal", status_code=201)
+async def create_fonte_principal(request: Request, fonte_principal: FontePrincipalCreate):
+    try:
+        log.debug("Received request to create fonte principal")
+        controller = get_controller(request.app.state.db)
+        response = controller.create_fonte_principal(fonte_principal.model_dump())
+        return response
+    except ValidacaoError as exc:
+        log.info("Fonte principal bloqueada por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
+    except Exception as exc:
+        log.exception("Failed to create fonte principal")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating fonte principal.",
+        ) from exc
+
+
+@router.get("/fonteprincipal")
+@router.get("/fonte_principal")
+async def read_fonte_principal(request: Request):
+    try:
+        log.debug("Received request for fonte principal list")
+        controller = get_controller(request.app.state.db)
+        response = controller.read_fonte_principal()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch fonte principal list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching fonte principal.",
+        ) from exc
+
+
+@router.post("/contatotecnico", status_code=201)
+@router.post("/contato_tecnico", status_code=201)
+async def create_contato_tecnico(request: Request, contato_tecnico: ContatoTecnicoCreate):
+    try:
+        log.debug("Received request to create contato tecnico")
+        controller = get_controller(request.app.state.db)
+        response = controller.create_contato_tecnico(contato_tecnico.model_dump())
+        return response
+    except ValidacaoError as exc:
+        log.info("Contato tecnico bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
+    except Exception as exc:
+        log.exception("Failed to create contato tecnico")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating contato tecnico.",
+        ) from exc
+
+
+@router.get("/contatotecnico")
+@router.get("/contato_tecnico")
+async def read_contato_tecnico(request: Request):
+    try:
+        log.debug("Received request for contato tecnico list")
+        controller = get_controller(request.app.state.db)
+        response = controller.read_contato_tecnico()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch contato tecnico list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching contato tecnico.",
+        ) from exc
+
+
+@router.put("/contatotecnico/{contato_tecnico_id}")
+async def update_contato_tecnico(request: Request, contato_tecnico_id: int, contato_tecnico: ContatoTecnicoCreate):
+    try:
+        log.debug("Received request to update contato tecnico %s", contato_tecnico_id)
+        controller = get_controller(request.app.state.db)
+        response = controller.update_contato_tecnico(contato_tecnico_id, contato_tecnico.model_dump())
+    except ValidacaoError as exc:
+        log.info("Contato tecnico bloqueado por validacao: %s", exc)
+        raise HTTPException(status_code=422, detail="; ".join(exc.messages)) from exc
+    except Exception as exc:
+        log.exception("Failed to update contato tecnico")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating contato tecnico.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Contato técnico não encontrado.")
+    return response
+
+
+@router.post("/atendimentoconsumidor", status_code=201)
+@router.post("/atendimento_consumidor", status_code=201)
+async def create_atendimento_consumidor(request: Request, atendimento_consumidor: AtendimentoConsumidorCreate):
+    try:
+        log.debug("Received request to create atendimento consumidor")
+        controller = get_controller(request.app.state.db)
+        response = controller.create_atendimento_consumidor(atendimento_consumidor.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create atendimento consumidor")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating atendimento consumidor.",
+        ) from exc
+
+
+@router.get("/atendimentoconsumidor")
+@router.get("/atendimento_consumidor")
+async def read_atendimento_consumidor(request: Request):
+    try:
+        log.debug("Received request for atendimento consumidor list")
+        controller = get_controller(request.app.state.db)
+        response = controller.read_atendimento_consumidor()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch atendimento consumidor list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching atendimento consumidor.",
+        ) from exc
+
+
+@router.put("/atendimentoconsumidor/{atendimento_consumidor_id}")
+async def update_atendimento_consumidor(request: Request, atendimento_consumidor_id: int, atendimento_consumidor: AtendimentoConsumidorCreate):
+    try:
+        log.debug("Received request to update atendimento consumidor %s", atendimento_consumidor_id)
+        controller = get_controller(request.app.state.db)
+        response = controller.update_atendimento_consumidor(atendimento_consumidor_id, atendimento_consumidor.model_dump())
+    except Exception as exc:
+        log.exception("Failed to update atendimento consumidor")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating atendimento consumidor.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Atendimento ao consumidor não encontrado.")
+    return response
+
+
+@router.post("/pessoaautorizada", status_code=201)
+@router.post("/pessoa_autorizada", status_code=201)
+async def create_pessoa_autorizada(request: Request, pessoa_autorizada: PessoaAutorizadaCreate):
+    try:
+        log.debug("Received request to create pessoa autorizada")
+        controller = get_controller(request.app.state.db)
+        response = controller.create_pessoa_autorizada(pessoa_autorizada.model_dump())
+        return response
+    except Exception as exc:
+        log.exception("Failed to create pessoa autorizada")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while creating pessoa autorizada.",
+        ) from exc
+
+
+@router.get("/pessoaautorizada")
+@router.get("/pessoa_autorizada")
+async def read_pessoa_autorizada(request: Request):
+    try:
+        log.debug("Received request for pessoa autorizada list")
+        controller = get_controller(request.app.state.db)
+        response = controller.read_pessoa_autorizada()
+        return response
+    except Exception as exc:
+        log.exception("Failed to fetch pessoa autorizada list")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while fetching pessoa autorizada.",
+        ) from exc
+
+
+@router.put("/pessoaautorizada/{pessoa_autorizada_id}")
+async def update_pessoa_autorizada(request: Request, pessoa_autorizada_id: int, pessoa_autorizada: PessoaAutorizadaCreate):
+    try:
+        log.debug("Received request to update pessoa autorizada %s", pessoa_autorizada_id)
+        controller = get_controller(request.app.state.db)
+        response = controller.update_pessoa_autorizada(pessoa_autorizada_id, pessoa_autorizada.model_dump())
+    except Exception as exc:
+        log.exception("Failed to update pessoa autorizada")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while updating pessoa autorizada.",
+        ) from exc
+
+    if not response:
+        raise HTTPException(status_code=404, detail="Pessoa autorizada não encontrada.")
+    return response

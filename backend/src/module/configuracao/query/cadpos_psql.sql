@@ -1,0 +1,131 @@
+CREATE SCHEMA IF NOT EXISTS cadpos;
+
+CREATE TABLE cadpos.Endereco (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CEP             VARCHAR(8)   NOT NULL,
+    Logradouro      VARCHAR(255) NOT NULL,
+    Numero          VARCHAR(20),
+    Complemento     VARCHAR(255),
+    Bairro          VARCHAR(100) NOT NULL,
+    Municipio       VARCHAR(100) NOT NULL,
+    UF              CHAR(2)      NOT NULL
+);
+
+CREATE TABLE cadpos.Telefone (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    DDD             CHAR(2)      NOT NULL,
+    Numero          VARCHAR(9)   NOT NULL,
+    Ramal           VARCHAR(10)
+);
+
+CREATE TABLE cadpos.FontePrincipal (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CNPJ            VARCHAR(14)  NOT NULL UNIQUE,
+    NomeCompleto    VARCHAR(255) NOT NULL,
+    Tipo            VARCHAR(20)  NOT NULL DEFAULT 'OUTRO',
+    IspbFonte       VARCHAR(8)   NOT NULL,
+    IspbCip         VARCHAR(8)   NOT NULL,
+    EnderecoId      BIGINT       NOT NULL,
+    TelefoneId      BIGINT,
+    UrlSite         VARCHAR(255),
+
+    CONSTRAINT FK_FontePrincipal_Endereco
+        FOREIGN KEY (EnderecoId)
+        REFERENCES cadpos.Endereco (Id),
+
+    CONSTRAINT FK_FontePrincipal_Telefone
+        FOREIGN KEY (TelefoneId)
+        REFERENCES cadpos.Telefone (Id)
+);
+
+-- Secao 2 do leiaute ACPO109 - Contato Tecnico (repetivel, min 1 / max 5).
+CREATE TABLE cadpos.ContatoTecnico (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Nome             VARCHAR(255) NOT NULL,
+    Email            VARCHAR(255),
+    Departamento     VARCHAR(100),
+    Cargo            VARCHAR(100),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+    Ramal            VARCHAR(10),
+
+    CONSTRAINT FK_ContatoTecnico_FontePrincipal
+        FOREIGN KEY (FontePrincipalId)
+        REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
+);
+
+-- Secao 3 do leiaute ACPO109 - Atendimento ao Consumidor (repetivel, min 1 / max 5).
+CREATE TABLE cadpos.AtendimentoConsumidor (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Departamento     VARCHAR(100),
+    Email            VARCHAR(255),
+    TipoTelefone     VARCHAR(60),
+    CodPais          VARCHAR(3),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+
+    CONSTRAINT FK_AtendimentoConsumidor_FontePrincipal
+        FOREIGN KEY (FontePrincipalId)
+        REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
+);
+
+-- Secao 4 do leiaute ACPO109 - Pessoa Autorizada para Liminar (repetivel, min 1 / max 5).
+CREATE TABLE cadpos.PessoaAutorizada (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FontePrincipalId BIGINT       NOT NULL,
+    Nome             VARCHAR(255),
+    Email            VARCHAR(255),
+    CPF              VARCHAR(11),
+    DDD              VARCHAR(2),
+    Telefone         VARCHAR(9),
+
+    CONSTRAINT FK_PessoaAutorizada_FontePrincipal
+        FOREIGN KEY (FontePrincipalId)
+        REFERENCES cadpos.FontePrincipal (Id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE cadpos.Modalidades (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Nome            VARCHAR(255) NOT NULL UNIQUE,
+    Descricao       VARCHAR(500),
+    TipoReporte     VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE cadpos.Produtos (
+    Id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ModalidadeId    BIGINT,
+    Codigo          VARCHAR(10)  NOT NULL UNIQUE,
+    Nome            VARCHAR(255) NOT NULL,
+    Ativo           BOOLEAN      NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT FK_Produtos_Modalidades
+        FOREIGN KEY (ModalidadeId)
+        REFERENCES cadpos.Modalidades (Id)
+);
+
+-- Configuracao da aplicacao (singleton): pasta onde os arquivos gerados nas
+-- execucoes (ACPO109 e demais leiautes futuros) sao gravados em disco.
+CREATE TABLE cadpos.Configuracao (
+    Id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    DiretorioSalvamento VARCHAR(500) NOT NULL,
+    AtualizadoEm        TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
+-- Janela de execucoes: historico de geracao de arquivos (ACPO109 e demais
+-- leiautes futuros), sempre a partir dos dados ja cadastrados nas tabelas
+-- acima. Parametros guarda o envelope informado na execucao (ex.: CnpjIf,
+-- NrRms...) e ConteudoArquivo guarda o arquivo gerado, para conferencia e
+-- reenvio sem precisar executar novamente.
+CREATE TABLE cadpos.Execucao (
+    Id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Layout           VARCHAR(20)  NOT NULL,
+    Parametros       JSONB        NOT NULL,
+    NomeArquivo      VARCHAR(255) NOT NULL,
+    ConteudoArquivo  TEXT         NOT NULL,
+    CriadoEm         TIMESTAMP    NOT NULL DEFAULT NOW()
+);
